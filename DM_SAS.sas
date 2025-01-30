@@ -1,4 +1,7 @@
-%let filepath = /home/u64124783/Projet Model Linéaire/games.csv;
+/* FIX LES DATES RAJOUTER COLONNES MOIS ANNEE
+FAIRE LES COLONNES GENRES, CATEGORIE */
+
+%let filepath = /home/u64124783/Projet Model Linéaire/games.csv
 
 proc import datafile= "&filepath"
 	dbms = csv out=STEAM_GAMES
@@ -38,16 +41,15 @@ Average_Estimated = Mean(Estimated_Low, Estimated_High);
 Average_SalesRevenue_Estimated = Price * Average_Estimated;
 Average_Review = (Positive / (Positive + Negative));
 Supported_Languages = countw('Supported Languages'n);
-Release_Month = substr('Release Date'n,1,3);
-Release_Year = substr('Release Date'n,9,4);
-Release_Date = MDY(Release_Month,1,Release_Year); 
+Release_Month = input(scan(Release_Date,1,'/'), best12.);
+Release_Year = input(scan(Release_Date,2,'/'), best12.); 
 num_genres = countw(genres, ',');
+Release_Date = input('Release date'n, ANYDTDTE15.);
 
-format Average_SalesRevenue_Estimated dollar12. Average_Review percent.2;
+format Average_SalesRevenue_Estimated dollar12.2 Average_Review percent.2 
+Release_Date MMYYS. Price dollar12.2 Release_Month MONTH. Release_Year YEARS.;
 
 run;
 
+/* CODE REALISER PAR : NATHAN OUSALEM */
 
-
-
-/* Code réalisé par : NATHAN OUSALEM */
