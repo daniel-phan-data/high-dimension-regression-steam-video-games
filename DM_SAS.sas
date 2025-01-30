@@ -47,3 +47,7 @@ format Average_SalesRevenue_Estimated dollar12. Average_Review percent.2;
 
 run;
 
+
+
+
+/* Code réalisé par : NATHAN OUSALEM */
