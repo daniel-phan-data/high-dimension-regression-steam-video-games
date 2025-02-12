@@ -1,7 +1,7 @@
 library("tidyverse")
 library("DataExplorer")
 library(dplyr)
-games <- read.csv("./steam_data/games.csv")
+games <- read.csv("../steam_data/games.csv")
 str(games)
 #remove games with 0 popularity
 games <- games %>% filter(Average.playtime.forever>0 & Peak.CCU>0)
@@ -21,10 +21,12 @@ gamesc <- gamesc %>% select(-Tags, -Genres, -Categories, -Publishers,
 #quick boxplot to visualize the numerical variables
 summary(gamesc)
 names(gamesc)
-label=c(names(gamesc[2:10]))
-boxplot(gamesc[2:10], names=label)
+label=c(names(gamesc[2:9]))
+boxplot(gamesc[2:9], names=label)
 #use of log on Peak.ccu to normalize deviation
 ggplot(gamesc, aes(y = Peak.CCU)) + 
   geom_boxplot() + 
   scale_y_log10() + 
   theme_minimal()
+
+names(gamesc)
