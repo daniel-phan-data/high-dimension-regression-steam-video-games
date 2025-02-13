@@ -1,0 +1,134 @@
+# ==============================
+# R-specific files
+# ==============================
+# Ignore R workspace files
+.RData
+.Rhistory
+.Rproj.user/
+
+# Ignore R Markdown cache and output files
+*.Rproj
+*.Rmd
+*.html
+*.nb.html
+*.pdf
+*.docx
+*.pptx
+*.cache/
+*.knit.md
+
+# Ignore R package documentation
+*.Rd
+/man/
+/docs/
+/vignettes/
+
+# Ignore R package build artifacts
+.Rcheck/
+/src/*.o
+/src/*.so
+/src/*.dll
+
+# Ignore R environment files
+.Renviron
+.Rprofile
+
+# ==============================
+# Python-specific files
+# ==============================
+# Ignore Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# Ignore Python distribution / packaging files
+*.egg-info/
+*.egg
+dist/
+build/
+pip-wheel-metadata/
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore pytest cache
+.pytest_cache/
+
+# Ignore Python environment files
+.env
+.venv
+requirements.txt
+Pipfile
+Pipfile.lock
+
+# ==============================
+# SAS-specific files
+# ==============================
+# Ignore SAS datasets and logs
+*.sas7bdat
+*.log
+*.lst
+*.mht
+
+# Ignore SAS temporary files
+*.sas7bcat
+*.sas7bvew
+*.sas7bitm
+
+# Ignore SAS macro libraries
+*.sasmacro
+
+# ==============================
+# General files to ignore
+# ==============================
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ignore IDE-specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Ignore data files (common in R, Python, and SAS projects)
+#*.csv
+#*.xlsx
+#*.json
+#*.txt
+#*.dat
+
+# Ignore log files
+*.log
+*.out
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore compiled files
+*.o
+*.so
+*.dll
+*.exe
+
+# Ignore large files (e.g., datasets, backups)
+*.zip
+*.tar.gz
+*.gz
+*.bz2
+*.7z
+
+# Ignore secrets and sensitive files
+*.env
+*.key
+*.pem
+*.crt
+*.secret

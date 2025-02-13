@@ -1,8 +1,10 @@
 library("tidyverse")
 library("DataExplorer")
 library(dplyr)
-games <- read.csv("../steam_data/games.csv")
-str(games)
+
+filepath <- "../steam_data/games.csv"
+games <- read.csv(filepath)
+## quick rough cleaning ----
 #remove games with 0 popularity
 games <- games %>% filter(Average.playtime.forever>0 & Peak.CCU>0)
 #factoring some variables just in case
@@ -18,13 +20,45 @@ summary(gamesc)
 # keep only numerical variables for now
 gamesc <- gamesc %>% select(-Tags, -Genres, -Categories, -Publishers,
                             -Score.rank, -User.score, -Metacritic.score, -Developers)
-#quick boxplot to visualize the numerical variables
+## quick boxplot to visualize the numerical variables ----
 summary(gamesc)
 names(gamesc)
 label=c(names(gamesc[2:9]))
 boxplot(gamesc[2:9], names=label)
+
+##  single variables tests on Peak.CCU ----
 #use of log on Peak.ccu to normalize deviation
 ggplot(gamesc, aes(y = Peak.CCU)) + 
   geom_boxplot() + 
   scale_y_log10() + 
+  theme_minimal()
+# use of sqrt to normalize
+ggplot(gamesc, aes(y = Peak.CCU)) + 
+  geom_boxplot() + 
+  scale_y_sqrt() + 
+  theme_minimal()
+# density graph
+ggplot(gamesc, aes(x = Peak.CCU)) + 
+  geom_density() + 
+  scale_x_log10() + 
+  theme_minimal()
+# violin plot
+ggplot(gamesc, aes(x = 1, y = Peak.CCU)) + 
+  geom_violin() + 
+  scale_y_log10() + 
+  theme_minimal()
+# outlier on another plot
+gamesc <- gamesc %>%
+  mutate(Outlier = ifelse(Peak.CCU > quantile(Peak.CCU, 0.99), "Outlier", "Normal"))
+
+ggplot(gamesc, aes(x = Outlier, y = Peak.CCU)) + 
+  geom_boxplot() + 
+  scale_y_log10() + 
+  theme_minimal()
+## two variables tests (not finished) ----
+# scatter plot
+ggplot(gamesc, aes(x = Peak.CCU, y = Average.playtime.forever)) + 
+  geom_point(alpha = 0.5) + 
+  scale_y_log10() + 
+  scale_x_log10() + 
   theme_minimal()
