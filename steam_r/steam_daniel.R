@@ -28,5 +28,3 @@ ggplot(gamesc, aes(y = Peak.CCU)) +
   geom_boxplot() + 
   scale_y_log10() + 
   theme_minimal()
-
-names(gamesc)
