@@ -1,6 +1,8 @@
 library("tidyverse")
 library("DataExplorer")
 library(dplyr)
+library(ggplot2)
+library(rlang)  # Pour utiliser sym()
 
 filepath <- "../steam_data/games.csv"
 games <- read.csv(filepath)
@@ -26,9 +28,9 @@ names(gamesc)
 label=c(names(gamesc[2:9]))
 boxplot(gamesc[2:9], names=label)
 
-##  single variables tests on Peak.CCU ----
-#use of log on Peak.ccu to normalize deviation
-ggplot(gamesc, aes(y = Peak.CCU)) + 
+## exemples of uni tests on Peak.CCU ----
+#use of log to normalize deviation
+ggplot(gamesc, aes(y = var)) + 
   geom_boxplot() + 
   scale_y_log10() + 
   theme_minimal()
@@ -39,22 +41,43 @@ ggplot(gamesc, aes(y = Peak.CCU)) +
   theme_minimal()
 # density graph
 ggplot(gamesc, aes(x = Peak.CCU)) + 
-  geom_density() + 
+  geom_density(fill = "blue", alpha = 0.3) + 
   scale_x_log10() + 
   theme_minimal()
 # violin plot
 ggplot(gamesc, aes(x = 1, y = Peak.CCU)) + 
-  geom_violin() + 
+  geom_violin(fill = "blue", alpha = 0.3) + 
   scale_y_log10() + 
   theme_minimal()
-# outlier on another plot
-gamesc <- gamesc %>%
-  mutate(Outlier = ifelse(Peak.CCU > quantile(Peak.CCU, 0.99), "Outlier", "Normal"))
+## uni tests but with a macro var ----
 
-ggplot(gamesc, aes(x = Outlier, y = Peak.CCU)) + 
+names(gamesc) # get names of variables
+var <- 'Peak.CCU'  # choose a variable
+
+# boxplot log10
+ggplot(gamesc, aes_string(y = var)) + 
   geom_boxplot() + 
   scale_y_log10() + 
   theme_minimal()
+
+# boxplot sqrt
+ggplot(gamesc, aes_string(y = var)) + 
+  geom_boxplot() + 
+  scale_y_sqrt() + 
+  theme_minimal()
+
+# density graph log10
+ggplot(gamesc, aes_string(x = var)) + 
+  geom_density(fill = "blue", alpha = 0.3) + 
+  scale_x_log10() + 
+  theme_minimal()
+
+# violing plot log10
+ggplot(gamesc, aes_string(x = "1", y = var)) + 
+  geom_violin(fill = "blue", alpha = 0.3) + 
+  scale_y_log10() + 
+  theme_minimal()
+
 ## two variables tests (not finished) ----
 # scatter plot
 ggplot(gamesc, aes(x = Peak.CCU, y = Average.playtime.forever)) + 
@@ -62,3 +85,4 @@ ggplot(gamesc, aes(x = Peak.CCU, y = Average.playtime.forever)) +
   scale_y_log10() + 
   scale_x_log10() + 
   theme_minimal()
+
