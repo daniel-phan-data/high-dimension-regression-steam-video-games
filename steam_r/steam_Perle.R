@@ -67,21 +67,14 @@ ggplot(gamesc, aes(x = Outlier, y = Peak.CCU)) +
   geom_boxplot() + 
   scale_y_log10() + 
   theme_minimal()
-## two variables tests (not finished) ----
-# scatter plot
-ggplot(gamesc, aes(x = Peak.CCU, y = Average.playtime.forever)) + 
-  geom_point(alpha = 0.5) + 
-  scale_y_log10() + 
-  scale_x_log10() + 
-  theme_minimal()
-
+## normality + spearman (bivar) ----
 #normality test
 library(nortest)
 lillie.test(gamesc$Positive)
 lillie.test(gamesc$Price)
 lillie.test(gamesc$Negative)
 lillie.test(gamesc$Peak.CCU)
-lillie.test(gamesc$Average.playtime.forever)
+lillie.test(gamesc$Average.playtime.forever) # Y
 lillie.test(gamesc$Recommendations)
 gamesc$Estimated.owners2 <- (as.numeric(sub("-.*", "", gamesc$Estimated.owners)) + as.numeric(sub(".*-", "",gamesc$Estimated.owners))) / 2
 lillie.test(gamesc$Estimated.owners2)
@@ -90,3 +83,5 @@ cor.test(gamesc$Price, gamesc$Positive, method = "spearman",exact=FALSE)
 cor.test(gamesc$Price, gamesc$Negative, method = "spearman",exact=FALSE)
 cor.test(gamesc$Price, gamesc$Peak.CCU, method = "spearman",exact=FALSE)
 cor.test(gamesc$Price, gamesc$Estimated.owners2, method = "spearman",exact=FALSE)
+
+# matrice de correlation
