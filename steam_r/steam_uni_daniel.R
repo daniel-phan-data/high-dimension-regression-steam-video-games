@@ -22,9 +22,12 @@ gamesc <- gamesc %>% select(-Tags, -Genres, -Categories, -Publishers,
 
 ## Peak.CCU density log10 ----
 ggplot(gamesc, aes(x = Peak.CCU)) + 
-  geom_density() + 
+  geom_density(fill = "blue", alpha = 0.3) + 
   scale_x_log10() + 
-  theme_minimal()
+  theme_minimal() +
+  ggtitle("Density Plot of Peak CCU (log10 scale)") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
+
 ## required age histogram ----
 x <- gamesc$Required.age
 hist(x,breaks=15,col="blue",
@@ -39,29 +42,39 @@ lines(densite, col = "purple",lwd=3)
 ## price density ----
 ggplot(gamesc, aes(x = Price)) + 
   geom_density(fill = "blue", alpha = 0.3) + 
-  theme_minimal()
+  theme_minimal() +
+  ggtitle("Density Plot of Price (log10 scale)") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
 
 ##Positive density log10 ----
 ggplot(gamesc, aes(x = Positive)) +
   geom_density(fill = "blue", alpha = 0.3) +
   scale_x_log10() +
-  theme_minimal()
+  theme_minimal() +
+  ggtitle("Density Plot of number of positive reviews (log10 scale)") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
 
 ## Negative density log10----
 ggplot(gamesc, aes(x = Negative)) +
   geom_density(fill = "blue", alpha = 0.3) +
   scale_x_log10() +
-  theme_minimal()
+  theme_minimal() +
+  ggtitle("Density Plot of number of negative reviews (log10 scale)") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
 
 ## Recommendations density log10 ----
 ggplot(gamesc, aes(x = Recommendations)) +
   geom_density(fill = "blue", alpha = 0.3) +
   scale_x_log10() +
-  theme_minimal()
+  theme_minimal() +
+  ggtitle("Density Plot of number of recommendations (log10 scale)") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
 
 ## Average playtime forever----
 ggplot(gamesc, aes(x = Average.playtime.forever)) +
   geom_density(fill = "blue", alpha = 0.3) +
   scale_x_log10() +
-  theme_minimal()
+  theme_minimal() +
+  ggtitle("Density Plot of Average playtime forever (log10 scale)") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14))
 
