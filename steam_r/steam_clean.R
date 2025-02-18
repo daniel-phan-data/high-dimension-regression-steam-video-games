@@ -1,5 +1,4 @@
 # file to clean database before working on it
-# clean_data.R
 library(tidyverse)
 
 clean_games <- function(games) {
