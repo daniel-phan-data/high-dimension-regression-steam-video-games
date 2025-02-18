@@ -4,22 +4,12 @@ library(dplyr)
 
 filepath <- "../steam_data/games.csv"
 games <- read.csv(filepath)
-## quick rough cleaning ----
-#remove games with 0 popularity
-games <- games %>% filter(Average.playtime.forever>0 & Peak.CCU>0)
-#factoring some variables just in case
-games$Estimated.owners <- factor(games$Estimated.owners)
-games <- games %>% filter(Estimated.owners != "0 - 20000")
-games$Publishers <- factor(games$Publishers)
-games$Developers <- factor(games$Developers)
-# keep relevant variables
-gamesc <- games %>% select(2,4,5,6,7,20,22,23,24,25,27,29,33,34,35,36,37) 
-names(gamesc)
-summary(gamesc)
-# keep only numerical variables for now
-gamesc <- gamesc %>% select(-Tags, -Genres, -Categories, -Publishers,
-                            -Score.rank, -User.score, -Metacritic.score, -Developers)
+#filepath <- here("steam_data", "games.csv")  # perle's import
+#games <- read.csv(filepath)
 
+##cleaning using steam_clean.R ----
+source("steam_clean.R")  # Source the cleaning file
+cleaned_games <- clean_games(games)
 ## Peak.CCU density log10 ----
 ggplot(gamesc, aes(x = Peak.CCU)) + 
   geom_density(fill = "blue", alpha = 0.3) + 
