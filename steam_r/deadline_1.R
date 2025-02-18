@@ -1,11 +1,14 @@
-##library and data import ----
+##library imports ----
 library("tidyverse")
 library("DataExplorer")
 library(dplyr)
 library(here)
 library(ggplot2)
 library(nortest)
+library(ggcorrplot)
+library(corrplot)
 
+##data import ----
 filepath <- "../steam_data/games.csv"
 games <- read.csv(filepath)
 #filepath <- here("steam_data", "games.csv")  # perle's import
@@ -127,4 +130,20 @@ ggplot(cleaned_games, aes(x = Average.playtime.forever, y = Peak.CCU)) +
   theme_minimal() +
   scale_color_viridis_c()
 
-##correlation matrix next ? ----
+##correlation matrix next ----
+
+#keep numerical variables
+numeric_vars <- cleaned_games[, sapply(cleaned_games, is.numeric)]
+#correlation matrix
+cor_matrix <- cor(numeric_vars, method = "spearman", use = "pairwise.complete.obs")
+print(cor_matrix)
+#illustration
+corrplot(cor_matrix, method = "color", type = "upper", order = "hclust",
+         col = colorRampPalette(c("blue", "white", "red"))(200), tl.col = "black")
+#heatmap
+x11()
+ggcorrplot(cor_matrix, method = "square", type = "lower", lab = TRUE)
+
+#strong correlations : Positive - Recommendations (0.83) / Negative - Positive (0.80) 
+#Moderate correlations: Peak.CCU - Recommendations (0.59) / Negative - Recommendations (0.67) / Peak.CCU - Positive (0.66)
+#Weaker correlations: Price - Average.playtime.forever (0.30) / Price - Positive (0.27)
