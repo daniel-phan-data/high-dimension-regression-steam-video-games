@@ -1,4 +1,3 @@
-#hello c moi
 #quick cleaning and graph references
 
 library("tidyverse")
