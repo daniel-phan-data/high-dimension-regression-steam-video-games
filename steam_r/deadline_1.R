@@ -147,3 +147,4 @@ ggcorrplot(cor_matrix, method = "square", type = "lower", lab = TRUE)
 #strong correlations : Positive - Recommendations (0.83) / Negative - Positive (0.80) 
 #Moderate correlations: Peak.CCU - Recommendations (0.59) / Negative - Recommendations (0.67) / Peak.CCU - Positive (0.66)
 #Weaker correlations: Price - Average.playtime.forever (0.30) / Price - Positive (0.27)
+

@@ -27,9 +27,9 @@ gamesc <- gamesc %>% select(-Tags, -Genres, -Categories, -Publishers,
 ## quick boxplot to visualize the numerical variables ----
 summary(gamesc)
 names(gamesc)
-label=c(names(gamesc[2:9]))
-boxplot(gamesc[2:9], names=label)
-
+label=c(names(gamesc[3:4]))
+boxplot(gamesc[3:4], names=label)
+boxplot(gamesc[n], names=label[n])
 ## exemples of uni tests on Peak.CCU ----
 #use of log to normalize deviation
 ggplot(gamesc, aes(y = var)) + 
