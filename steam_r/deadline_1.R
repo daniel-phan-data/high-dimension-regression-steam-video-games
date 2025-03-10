@@ -230,3 +230,83 @@ ggcorrplot(cor_matrix, method = "square", type = "lower", lab = TRUE)
 #Moderate correlations: Peak.CCU - Recommendations (0.59) / Negative - Recommendations (0.67) / Peak.CCU - Positive (0.66)
 #Weaker correlations: Price - Average.playtime.forever (0.30) / Price - Positive (0.27)
 
+
+
+#### graphiques bivariés ####
+par(mfrow = c(2, 3))  
+
+plot(cleaned_games$Peak.CCU, cleaned_games$Average.playtime.forever,
+     main = "Playtime vs Peak.CCU", xlab = "Peak.CCU", ylab = "Playtime", pch = 19)
+x11()
+plot(cleaned_games$Price, cleaned_games$Average.playtime.forever,
+     main = "Playtime vs Price", xlab = "Price", ylab = "Playtime", pch = 19)
+
+plot(cleaned_games$Negative, cleaned_games$Average.playtime.forever,
+     main = "Playtime vs Negative", xlab = "Negative Reviews", ylab = "Playtime", pch = 19)
+
+plot(cleaned_games$Positive, cleaned_games$Average.playtime.forever,
+     main = "Playtime vs Positive", xlab = "Positive Reviews", ylab = "Playtime", pch = 19)
+
+plot(cleaned_games$Recommendations, cleaned_games$Average.playtime.forever,
+     main = "Playtime vs Recommendations", xlab = "Recommendations", ylab = "Playtime", pch = 19)
+
+
+# Nos résultats sont plombés par la présence des outliers et sont peu interprétable
+
+# passage en log 
+cleaned_games$log_Peak.CCU <- log10(cleaned_games$Peak.CCU + 1)
+cleaned_games$log_Price <- log10(cleaned_games$Price + 1)
+cleaned_games$log_Negative <- log10(cleaned_games$Negative + 1)
+cleaned_games$log_Positive <- log10(cleaned_games$Positive + 1)
+cleaned_games$log_Recommendations <- log10(cleaned_games$Recommendations + 1)
+
+
+par(mfrow = c(2, 3)) 
+plot(cleaned_games$log_Peak.CCU, cleaned_games$Average.playtime.forever,
+     main = "Playtime vs log_Peak.CCU", xlab = "Peak.CCU", ylab = "Playtime", pch = 19)
+x11()
+plot(cleaned_games$log_Price, cleaned_games$Average.playtime.forever,
+     main = "Playtime vs log_Price", xlab = "Price", ylab = "Playtime", pch = 19)
+
+plot(cleaned_games$log_Negative, cleaned_games$Average.playtime.forever,
+     main = "Playtime vs log_Negative", xlab = "Negative Reviews", ylab = "Playtime", pch = 19)
+
+plot(cleaned_games$log_Positive, cleaned_games$Average.playtime.forever,
+     main = "Playtime vs log_Positive", xlab = "Positive Reviews", ylab = "Playtime", pch = 19)
+
+plot(cleaned_games$log_Recommendations, cleaned_games$Average.playtime.forever,
+     main = "Playtime vs log_Recommendations", xlab = "Recommendations", ylab = "Playtime", pch = 19)
+
+
+# Playtime vs log_Peak.CCU
+
+# Il y a une légère tendance croissante : les jeux avec plus de joueurs simultanés tendent à avoir plus de temps de jeu moyen.
+
+
+# Playtime vs log_Price
+
+#La majorité des jeux sont à bas prix 
+# Pas de tendance claire sur le graph, cependant lorsuqe l'on tente une regression la variable semble assez correlé positivement
+# il semble y avoir bcp de variabilité 
+
+
+# Playtime vs log_Negative
+
+#les jeux avec plus de reviews négatives ont une répartition plus large du temps de jeu.
+# Les jeux populaires ont mécaniquement plus de critiques, qu’elles soient bonnes ou mauvaises.Donc la popularité est le vrai lien ici
+# attention à la multicolinéarité avec log_Positive
+
+# Playtime vs log_Positive
+
+#Tendance légèrement croissante, avec de très gros jeux ayant beaucoup de critiques positives et des playtimes très élevés
+# C’est la relation la plus logique, si les gens aiment un jeu, ils y jouent plus longtemps
+
+# Playtime vs log_Recommendations
+
+# Même tendance que pour log_Positive, mais plus dense au début, quelques outliers très hauts dans la durée
+#Recommandation = mesure de satisfaction et d’investissement → logique que ce soit lié au temps de jeu
+# très colinéaire avec log_Positive
+
+
+
+
