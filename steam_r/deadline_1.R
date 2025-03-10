@@ -211,10 +211,15 @@ ggplot(cleaned_games, aes(x = Average.playtime.forever, y = Peak.CCU)) +
 
 #keep numerical variables
 numeric_vars <- cleaned_games[, sapply(cleaned_games, is.numeric)]
+names(numeric_vars)
+numeric_vars <- numeric_vars[1:7] # delete log variable
+names(numeric_vars)
+
 #correlation matrix
 cor_matrix <- cor(numeric_vars, method = "spearman", use = "pairwise.complete.obs")
 print(cor_matrix)
 #illustration
+x11()
 corrplot(cor_matrix, method = "color", type = "upper", order = "hclust",
          col = colorRampPalette(c("blue", "white", "red"))(200), tl.col = "black")
 #heatmap
