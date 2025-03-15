@@ -74,3 +74,46 @@ cor.test(gamesc$Price, gamesc$Peak.CCU, method = "spearman",exact=FALSE)
 cor.test(gamesc$Price, gamesc$Estimated.owners2, method = "spearman",exact=FALSE)
 
 # matrice de correlation
+
+#recodage des revues positives
+
+total_reviews <- sum(gamesc$Positive,gamesc$Negative)
+recoder_positive <- function(gamesc$Positive, total_reviews) {
+  if (total_reviews >= 500) {
+    if (gamesc$Positive >= 95) {
+      return("Overwhelmingly Positive")
+    } else if (gamesc$Positive >= 80) {
+      return("Very Positive")
+    }
+  } else if (total_reviews >= 50) {
+    if (gamesc$Positive >= 80) {
+      return("Very Positive")
+    } else if (gamesc$Positive >= 70) {
+      return("Mostly Positive")
+    } else if (gamesc$Positive >= 40) {
+      return("Mixed")
+    } else if (gamesc$Positive >= 20) {
+      return("Mostly Negative")
+    } else {
+      return("Very Negative")
+    }
+  } else {
+    if (gamesc$Positive >= 80) {
+      return("Positive")
+    } else if (gamesc$Positive >= 70) {
+      return("Mostly Positive")
+    } else if (gamesc$Positive >= 40) {
+      return("Mixed")
+    } else if (gamesc$Positive >= 20) {
+      return("Mostly Negative")
+    } else {
+      return("Negative")
+    }
+  }
+}
+
+
+rating <- mapply(recoder_positive, gamesc$positive, gamesc$total_reviews)
+print(rating)
+
+
