@@ -5,10 +5,11 @@ library(dplyr)
 library(here)
 library(ggplot2)
 library(nortest)
+library(corrplot)
 
-filepath <- "steam_data/games.csv"
+filepath <- "../steam_data/games.csv"
 games <- read.csv(filepath)
-source("steam_clean.R")  # Source the cleaning file
+source("clean.R")  # Source the cleaning file
 cleaned_games <- clean_games(games)
 
 ####correlation matrix ####
@@ -21,7 +22,7 @@ cor_matrix <- cor(numeric_vars, method = "spearman", use = "pairwise.complete.ob
 print(cor_matrix)
 
 #illustration
-library(corrplot)
+
 
 corrplot(cor_matrix, method = "color", type = "upper", order = "hclust",
          col = colorRampPalette(c("blue", "white", "red"))(200), tl.col = "black")

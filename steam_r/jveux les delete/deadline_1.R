@@ -14,8 +14,8 @@ games <- read.csv(filepath)
 #filepath <- here("steam_data", "games.csv")  # perle's import
 #games <- read.csv(filepath)
 
-##cleaning using steam_clean.R ----
-source("steam_clean.R")  # Source the cleaning file
+##cleaning using clean.R ----
+source("clean.R")  # Source the cleaning file
 cleaned_games <- clean_games(games)
 
 ##univariate tests ----
