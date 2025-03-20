@@ -13,7 +13,7 @@ filepath <- "../steam_data/games.csv"
 games <- read.csv(filepath)
 
 ##cleaning using steam_clean.R ----
-source("clean.R")  # Source the cleaning file
+source("0clean.R")  # Source the cleaning file
 gamesc <- clean_games(games)
 ##create rating variable ----
 total_reviews <- sum(gamesc$Positive,gamesc$Negative)
