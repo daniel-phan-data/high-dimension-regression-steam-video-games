@@ -2,12 +2,6 @@
 library("tidyverse")
 library("DataExplorer")
 library(dplyr)
-library(here)
-library(ggplot2)
-library(nortest)
-library(ggcorrplot)
-library(corrplot)
-
 ##data import ----
 filepath <- "../steam_data/games.csv"
 games <- read.csv(filepath)
