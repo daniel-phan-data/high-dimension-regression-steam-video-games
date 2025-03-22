@@ -62,6 +62,20 @@ create_rating <- function(Positive, Negative) {
     return("Not enough reviews")  
   }
 }
-gamesc <- gamesc %>% mutate(rating = mapply(create_rating, Positive, total_reviews))
-print(gamesc$rating)
+gamesc <- gamesc %>% mutate(rating = mapply(create_rating, Positive, Negative))
+
+# Définir l'ordre des niveaux du plus positif au plus négatif
+rating_levels <- c("Overwhelmingly Positive", "Very Positive", "Positive", 
+                   "Mostly Positive", "Mixed", 
+                   "Mostly Negative", "Negative", "Very Negative", 
+                   "Overwhelmingly Negative", "Not enough reviews")
+
+# Convertir rating en facteur avec un ordre défini
+gamesc <- gamesc %>%
+  mutate(rating = factor(rating, levels = rating_levels, ordered = TRUE))
+
+# Réorganiser les colonnes : Positive, Negative et rating en 2ᵉ, 3ᵉ et 4ᵉ position
+gamesc <- gamesc %>%
+  select(1, Positive, Negative, rating, everything())
+
 effectifs <- gamesc %>% count(rating)
