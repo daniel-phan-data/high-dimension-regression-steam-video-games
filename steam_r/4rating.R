@@ -59,7 +59,7 @@ create_rating <- function(Positive, Negative) {
   } 
   
   else {
-    return("Not enough reviews")  # Cas où il y a moins de 10 reviews
+    return("Not enough reviews")  
   }
 }
 gamesc <- gamesc %>% mutate(rating = mapply(create_rating, Positive, total_reviews))
