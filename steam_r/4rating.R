@@ -10,36 +10,45 @@ games <- read.csv(filepath)
 source("clean.R")  # Source the cleaning file
 gamesc <- clean_games(games)
 ##create rating variable ----
-total_reviews <- sum(gamesc$Positive,gamesc$Negative)
-create_rating <- function(Positive, total_reviews) {
+create_rating <- function(Positive, Negative) {
+  total_reviews <- Positive + Negative
   if (total_reviews >= 500) {
-    if (Positive >= 95) {
+    if (Positive / total_reviews * 100 >= 95) {
       return("Overwhelmingly Positive")
-    } else if (Positive >= 80) {
+    } 
+    if (Positive / total_reviews * 100 >= 80 & Positive / total_reviews * 100 < 95) {
       return("Very Positive")
     }
-  } else if (total_reviews >= 50) {
-    if (Positive >= 80) {
+  } else if (total_reviews >= 50 & total_reviews < 500) {
+    if (Positive / total_reviews * 100 >= 80) {
       return("Very Positive")
-    } else if (Positive >= 70) {
+    } 
+    if (Positive / total_reviews * 100 >= 70 & Positive / total_reviews * 100 < 80) {
       return("Mostly Positive")
-    } else if (Positive >= 40) {
+    } 
+    if (Positive / total_reviews * 100 >= 40 & Positive / total_reviews * 100 < 70) {
       return("Mixed")
-    } else if (Positive >= 20) {
+    } 
+    if (Positive / total_reviews * 100 >= 20 & Positive / total_reviews * 100 < 40) {
       return("Mostly Negative")
-    } else {
+    } 
+    if (Positive / total_reviews * 100 < 20) {
       return("Very Negative")
     }
   } else {
-    if (Positive >= 80) {
+    if (Positive / total_reviews * 100 >= 80) {
       return("Positive")
-    } else if (Positive >= 70) {
+    } 
+    if (Positive / total_reviews * 100 >= 70 & Positive / total_reviews * 100 < 80) {
       return("Mostly Positive")
-    } else if (Positive >= 40) {
+    } 
+    if (Positive / total_reviews * 100 >= 40 & Positive / total_reviews * 100 < 70) {
       return("Mixed")
-    } else if (Positive >= 20) {
+    } 
+    if (Positive / total_reviews * 100 >= 20 & Positive / total_reviews * 100 < 40) {
       return("Mostly Negative")
-    } else {
+    } 
+    if (Positive / total_reviews * 100 < 20) {
       return("Negative")
     }
   }
@@ -47,3 +56,4 @@ create_rating <- function(Positive, total_reviews) {
 
 gamesc <- gamesc %>% mutate(rating = mapply(create_rating, Positive, total_reviews))
 print(gamesc$rating)
+
