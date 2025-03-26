@@ -29,7 +29,7 @@ clean_games <- function() {
   
   # create rating
   gamesc <- gamesc %>% mutate(rating = mapply(create_rating, Positive, Negative))
-  # Définir l'ordre des niveaux du plus positif au plus négatif
+  # define rating category order
   rating_levels <- c("Overwhelmingly Positive", "Very Positive", "Positive", 
                      "Mostly Positive", "Mixed", 
                      "Mostly Negative", "Negative", "Very Negative", 
