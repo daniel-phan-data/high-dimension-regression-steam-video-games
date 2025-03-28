@@ -1,11 +1,10 @@
-##library imports ----
-library(nortest)
-library(dplyr)
+## IMPORTS ----
 rm(list = ls())
-getwd()
-##load cleaned data ----
-source("0clean.R")  # Source the cleaning file
-gamesc <- clean_games()
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+temp_env <- new.env()
+source("set_up.R", local = temp_env)
+gamesc <- temp_env$set_up()
+rm(temp_env)
 
 ## normality tests for quantitative variables (bivar tests) ----
 #normality test

@@ -1,15 +1,48 @@
-##library imports ----
-library("tidyverse")
-library("DataExplorer")
-library(dplyr)
+## copy and paste IMPORTS at the beginning of your scripts ----
+# ## IMPORTS ----
+# rm(list = ls())
+# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+# temp_env <- new.env()
+# source("0clean.R", local = temp_env)
+# gamesc <- temp_env$set_up()
+# rm(temp_env)
 
-load_games <- function() {
-  filepath <- "../steam_data/games.csv"
-  games <- read.csv(filepath)
+## list of packages needed ----
+
+packages <- c(
+  "tidyverse", "DataExplorer", "dplyr", "here", "ggplot2", 
+  "nortest", "ggcorrplot", "corrplot", "ISLR", "lmtest", 
+  "leaps", "glmulti", "forcats"
+)
+
+
+## subfunctions ----
+set_up <- function() {
+  # reset stored values
+  rm(list = ls())
+  # set working dir to script's location
+  setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+  install_and_load(packages)
+  gamesc <- load_and_clean_games()
+  return(gamesc)
 }
 
-clean_games <- function() {
-  games <- load_games()
+install_and_load <- function(packages) {
+  # Find missing packages
+  missing_packages <- packages[!(packages %in% installed.packages()[, "Package"])]
+  
+  # Install missing packages
+  if (length(missing_packages) > 0) {
+    install.packages(missing_packages, dependencies = TRUE)
+  }
+  
+  # Load all packages
+  invisible(lapply(packages, library, character.only = TRUE))
+}
+
+load_and_clean_games <- function() {
+  filepath <- "../steam_data/games.csv"
+  games <- read.csv(filepath)
   games <- games %>% filter(Average.playtime.forever>0 & Peak.CCU>0)
   #factoring some variables just in case
   games$Estimated.owners <- factor(games$Estimated.owners)
@@ -18,27 +51,25 @@ clean_games <- function() {
   games$Developers <- factor(games$Developers)
   # keep relevant variables
   gamesc <- games %>% select(2,4,5,6,7,20,22,23,24,25,27,29,33,34,35,36,37) 
-  names(gamesc)
-  summary(gamesc)
   # keep only numerical variables for now
   gamesc <- gamesc %>% select(-Tags, -Genres, -Categories, -Publishers,
                               -Score.rank, -User.score, -Metacritic.score, -Developers)
   gamesc[is.na(gamesc)] <- 0
   total_reviews <- gamesc$Positive + gamesc$Negative
-  positive_ratio <- (gamesc$Positive / total_reviews) * 100  # Ratio des avis positifs
+  positive_ratio <- (gamesc$Positive / total_reviews) * 100  # ratio of positive reviews
   
-  # create rating
+  # create variable rating
   gamesc <- gamesc %>% mutate(rating = mapply(create_rating, Positive, Negative))
   # define rating category order
   rating_levels <- c("Overwhelmingly Positive", "Very Positive", "Positive", 
                      "Mostly Positive", "Mixed", 
                      "Mostly Negative", "Negative", "Very Negative", 
                      "Overwhelmingly Negative", "Not enough reviews")
-  # Convertir rating en facteur avec un ordre défini
+  # rating as factor
   gamesc <- gamesc %>%
     mutate(Rating = factor(rating, levels = rating_levels, ordered = TRUE))
   
-  # Réorganiser les colonnes
+  # reorganize columns
   gamesc <- gamesc %>%
     select(Name, Average.playtime.forever, Estimated.owners,
            Peak.CCU, Rating, Price,
