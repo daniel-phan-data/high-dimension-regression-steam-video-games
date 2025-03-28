@@ -1,9 +1,12 @@
-source("D:/pml/0clean.R")  # Source the cleaning file
-gamesc <- clean_games()
+## IMPORTS ----
+rm(list = ls())
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+temp_env <- new.env()
+source("0setup.R", local = temp_env)
+gamesc <- temp_env$setup()
+rm(temp_env)
 
-library(ISLR)
-library(lmtest)
-
+gamesc <- gamesc %>% select(-Name)
 modele.RLM <- lm(formula = log(Average.playtime.forever) ~ ., data = gamesc)
 summary(modele.RLM)
 sort(summary(modele.RLM)$coefficients[,"Pr(>|t|)"])
