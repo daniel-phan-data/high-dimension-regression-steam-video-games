@@ -4,7 +4,7 @@
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 # temp_env <- new.env()
 # source("0setup.R", local = temp_env)
-# gamesc <- temp_env$set_up()
+# gamesc <- temp_env$setup()
 # rm(temp_env)
 
 ## list of packages needed ----
@@ -17,7 +17,7 @@ packages <- c(
 
 
 ## subfunctions ----
-set_up <- function() {
+setup <- function() {
   # reset stored values
   rm(list = ls())
   # set working dir to script's location

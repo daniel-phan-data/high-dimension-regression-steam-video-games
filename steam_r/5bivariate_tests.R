@@ -3,7 +3,7 @@ rm(list = ls())
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 temp_env <- new.env()
 source("0setup.R", local = temp_env)
-gamesc <- temp_env$set_up()
+gamesc <- temp_env$setup()
 rm(temp_env)
 
 ## normality tests for quantitative variables (bivar tests) ----
