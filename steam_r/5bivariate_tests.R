@@ -2,7 +2,7 @@
 rm(list = ls())
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 temp_env <- new.env()
-source("set_up.R", local = temp_env)
+source("0setup.R", local = temp_env)
 gamesc <- temp_env$set_up()
 rm(temp_env)
 
