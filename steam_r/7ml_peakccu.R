@@ -8,8 +8,6 @@ rm(temp_env)
 
 #need to remove names for model building
 gamesc <- gamesc %>% select(-Name)
-log_gamesc <- gamesc
-log_gamesc[, sapply(log_gamesc, is.numeric)] <- log10(1+log_gamesc[,sapply(log_gamesc, is.numeric)])
 
 #### no transformations ----
 names(gamesc)
@@ -41,6 +39,8 @@ plot(modele.RLM, 3)
 ## too many values stacked on the left, STOP
 
 #### with log10 applied ----
+log_gamesc <- gamesc
+log_gamesc[, sapply(log_gamesc, is.numeric)] <- log10(1+log_gamesc[,sapply(log_gamesc, is.numeric)])
 names(log_gamesc)
 modele.RLM <- lm(formula = Average.playtime.forever ~ 
                      Peak.CCU,
