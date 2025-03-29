@@ -1,4 +1,4 @@
-#### replication td3 modeles polynomiaux avec une var explicative
+#### replication td3 modele polynomiaux avec une var explicative
 
 ## IMPORTS ----
 rm(list = ls())
