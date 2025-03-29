@@ -7,7 +7,7 @@ gamesc <- temp_env$setup()
 rm(temp_env)
 
 gamesc <- gamesc %>% select(-Name)
-
+summary(gamesc)
 # Function to create a linear model
 create_ml <- function(dataset, Y, X, categories) {
     if (length(Category) == 0) {
@@ -24,7 +24,7 @@ create_ml <- function(dataset, Y, X, categories) {
 apply_transformations <- function(data, variables) {
     for (var in variables) {
         # Log transformation: log10(x + 1) to avoid log(0)
-        data[[var]] <- log10(data[[var]] + 1)
+        #data[[var]] <- log10(data[[var]] + 1)
         
         # Standardization: (x - mean) / sd
         data[[var]] <- scale(data[[var]], center = TRUE, scale = TRUE)
@@ -51,23 +51,42 @@ winsorize_dataset <- function(data, variables) {
     return(data)
 }
 
+winsorize_noQ1 <- function(data, variables) {
+    for (var in variables) {
+        Q1 <- quantile(data[[var]], 0.25, na.rm = TRUE)
+        Q3 <- quantile(data[[var]], 0.75, na.rm = TRUE)
+        IQR_value <- Q3 - Q1
+        upper_bound <- Q3 + 1.5 * IQR_value
+        
+        # Remove rows where the variable value is below Q1
+        data <- data[data[[var]] >= Q1 | is.na(data[[var]]), ]
+        
+        # Winsorize values above the upper bound
+        data[[var]] <- ifelse(data[[var]] > upper_bound, upper_bound, data[[var]])
+    }
+    return(data)
+}
+
+
 
 ## on essaie de trouver un modele correct ----
-Y <- "Average.playtime.forever"
-X <- c("Peak.CCU", "Positive", "Negative", "Recommendations", "Price", "Required.age")
-
-categories <- c()
-categories <- c("Estimated.owners")
-names(gamesc)
-variables <- c(Y, X, categories)  # Combined variables list
-print(variables)
+# Y <- "Average.playtime.forever"
+# X <- c("Peak.CCU", "Positive", "Negative", "Recommendations", "Price", "Required.age")
+# 
+# categories <- c()
+# categories <- c("Estimated.owners")
+# names(gamesc)
+# variables <- c(Y, X, categories)  # Combined variables list
+# print(variables)
 # log, normalize and standardize
-gamesc_transformed <- apply_transformations(gamesc, X)
+# gamesc_transformed <- apply_transformations(gamesc, X)
 variables_to_winsorize <- c("Peak.CCU", "Positive", "Negative", "Recommendations", "Price", "Required.age")
-gamesc_w <- winsorize_dataset(gamesc, variables_to_winsorize)
+# gamesc_w <- winsorize_dataset(gamesc, variables_to_winsorize)
+gamesc_wq1 <- winsorize_noQ1(gamesc, variables_to_winsorize)
+games_wq1 <- apply_transformations(gamesc, variables_to_winsorize)
 # Create the model
 # modele.RLM <- create_ml(gamesc, Y, X, categories)
-modele.RLM <- lm(formula = Average.playtime.forever ~ ., data = gamesc_w)
+modele.RLM <- lm(formula = Average.playtime.forever ~ ., data = gamesc_wq1)
 
 # View model summary# View model summarygamesc
 summary(modele.RLM)
