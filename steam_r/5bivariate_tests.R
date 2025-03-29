@@ -12,7 +12,7 @@ rm(temp_env)
 names(gamesc)
 numeric_cols <- gamesc %>%
   select(Average.playtime.forever, Peak.CCU, Price, Recommendations, Required.age,
-         Positive, Negative)
+         Positive, Negative, total_reviews, positive_ratio)
 
 # Appliquer log10 (+1 pour éviter log10(0))
 numeric_cols_log <- numeric_cols %>%
@@ -31,7 +31,7 @@ print(lillie_table)
 names(gamesc)
 numeric_cols <- gamesc %>%
   select(Average.playtime.forever, Peak.CCU, Price, Recommendations, Required.age,
-         Positive, Negative)
+         Positive, Negative, total_reviews, positive_ratio)
 names(numeric_cols)
 
 # Effectuer le test de Spearman pour toutes les combinaisons avec "Average.playtime.forever"
@@ -63,7 +63,7 @@ y <- gamesc$Average.playtime.forever
 
 # Sélectionner les variables qualitatives
 quali <- gamesc %>%
-  select(Estimated.owners, Rating)
+  select(Estimated.owners, rating)
 
 # Créer une liste vide pour stocker les résultats
 kruskal_table <- data.frame(

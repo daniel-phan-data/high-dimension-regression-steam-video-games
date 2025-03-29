@@ -58,6 +58,12 @@ load_and_clean_games <- function() {
   total_reviews <- gamesc$Positive + gamesc$Negative
   positive_ratio <- (gamesc$Positive / total_reviews) * 100  # ratio of positive reviews
   
+  # create variable total_reviews
+  gamesc <- gamesc %>% mutate(total_reviews = mapply(create_total_reviews, Positive, Negative))
+  
+  # create variable positive_ratio
+  gamesc <- gamesc %>% mutate(positive_ratio = mapply(create_positive_ratio, Positive, Negative))
+  
   # create variable rating
   gamesc <- gamesc %>% mutate(rating = mapply(create_rating, Positive, Negative))
   # define rating category order
@@ -67,15 +73,15 @@ load_and_clean_games <- function() {
                      "Overwhelmingly Negative", "Not enough reviews")
   # rating as factor
   gamesc <- gamesc %>%
-    mutate(Rating = factor(rating, levels = rating_levels, ordered = TRUE))
+    mutate(rating = factor(rating, levels = rating_levels, ordered = TRUE))
   
   # reorganize columns
   gamesc <- gamesc %>%
     select(Name, Average.playtime.forever, Estimated.owners,
-           Peak.CCU, Rating, Price,
+           Peak.CCU, rating, Price,
            Recommendations, Required.age,
-           Positive, Negative
-           )
+           Positive, Negative,
+           total_reviews, positive_ratio)
   return(gamesc)
 }
 
@@ -130,4 +136,15 @@ create_rating <- function(Positive, Negative) {
   else {
     return("Not enough reviews")  
   }
+}
+
+create_total_reviews <- function(Positive, Negative) {
+  total_reviews <- Positive + Negative
+  return(total_reviews)
+}
+
+create_positive_ratio <- function(Positive, Negative) {
+  total_reviews <- Positive + Negative
+  positive_ratio <- (Positive / total_reviews) * 100
+  return(positive_ratio)
 }
