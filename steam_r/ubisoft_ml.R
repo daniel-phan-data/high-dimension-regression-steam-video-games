@@ -6,11 +6,9 @@ source("0setup.R", local = temp_env)
 gamesc <- temp_env$setup()
 rm(temp_env)
 
-gamesc <- gamesc %>% select(-Name)
-summary(gamesc)
 # Function to create a linear model
 create_ml <- function(dataset, Y, X, categories) {
-    if (length(Category) == 0) {
+    if (length(categories) == 0) {
         formula <- as.formula(paste(Y, "~", paste(X, collapse = "+")))
     } else {
         formula <- as.formula(paste(Y, "~", paste(c(X, categories), collapse = "+")))
@@ -35,6 +33,7 @@ apply_transformations <- function(data, variables) {
     return(data)
 }
 
+
 #replace below Q1 with Q1, and anything above Q3+1.5IQR with that
 #basically cap extreme values, because very high outliers and too many small values
 winsorize_dataset <- function(data, variables) {
@@ -51,37 +50,18 @@ winsorize_dataset <- function(data, variables) {
     return(data)
 }
 
-winsorize_noQ1 <- function(data, variables) {
-    for (var in variables) {
-        Q1 <- quantile(data[[var]], 0.25, na.rm = TRUE)
-        Q3 <- quantile(data[[var]], 0.75, na.rm = TRUE)
-        IQR_value <- Q3 - Q1
-        upper_bound <- Q3 + 1.5 * IQR_value
-        
-        # Remove rows where the variable value is below Q1
-        data <- data[data[[var]] >= Q1 | is.na(data[[var]]), ]
-        
-        # Winsorize values above the upper bound
-        data[[var]] <- ifelse(data[[var]] > upper_bound, upper_bound, data[[var]])
-    }
-    return(data)
-}
-
-
 
 ## on essaie de trouver un modele correct ----
-# Y <- "Average.playtime.forever"
-# X <- c("Peak.CCU", "Positive", "Negative", "Recommendations", "Price", "Required.age")
-# categories <- c("Estimated.owners")
-# variables <- c(Y, X, categories)  # Combined variables list
-# print(variables)
-variables_to_winsorize <- c("Peak.CCU", "Positive", "Negative", "Recommendations", "Price", "Required.age")
-# gamesc_w <- winsorize_dataset(gamesc, variables_to_winsorize)
-gamesc_wq1 <- winsorize_noQ1(gamesc, variables_to_winsorize)
-games_wq1 <- apply_transformations(gamesc, variables_to_winsorize)
-# Create the model
-# modele.RLM <- create_ml(gamesc, Y, X, categories)
-modele.RLM <- lm(formula = Average.playtime.forever ~ ., data = gamesc_wq1)
+
+ubisoft <- gamesc %>% filter(Publishers == "Ubisoft")
+Y <- "Average.playtime.forever"
+X <- c("Peak.CCU", "Positive", "Negative", "Recommendations", "Price", "Required.age"
+       ,"positive_ratio", "total_reviews")
+categories <- c()
+categories <- c("Estimated.owners", "rating")
+variables <- c(Y, X, categories)  # Combined variables list
+print(variables)
+modele.RLM <- create_ml(ubisoft, Y, X, categories)
 
 # View model summary# View model summarygamesc
 summary(modele.RLM)
