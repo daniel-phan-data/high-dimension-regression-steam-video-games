@@ -6,7 +6,7 @@ source("0setup.R", local = temp_env)
 gamesc <- temp_env$setup()
 rm(temp_env)
 
-gamesc <- gamesc %>% select(-Name)
+gamesc <- gamesc %>% select(-Name, -Publishers)
 modele.RLM <- lm(formula = Average.playtime.forever ~ ., data = gamesc)
 summary(modele.RLM)
 sort(summary(modele.RLM)$coefficients[,"Pr(>|t|)"])
