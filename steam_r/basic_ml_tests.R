@@ -6,7 +6,7 @@ source("0setup.R", local = temp_env)
 gamesc <- temp_env$setup()
 rm(temp_env)
 
-gamesc <- gamesc %>% select(-Name)
+gamesc <- gamesc %>% select(-Name, -Publishers)
 summary(gamesc)
 # Function to create a linear model
 create_ml <- function(dataset, Y, X, categories) {
@@ -24,7 +24,7 @@ create_ml <- function(dataset, Y, X, categories) {
 apply_transformations <- function(data, variables) {
     for (var in variables) {
         # Log transformation: log10(x + 1) to avoid log(0)
-        #data[[var]] <- log10(data[[var]] + 1)
+        data[[var]] <- log10(data[[var]] + 1)
         
         # Standardization: (x - mean) / sd
         data[[var]] <- scale(data[[var]], center = TRUE, scale = TRUE)
