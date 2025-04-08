@@ -14,7 +14,7 @@ library(lmtest)
 
 # Afficher la structure du jeu de données "Carseats"
 str(Carseats)
-View(Carseats)
+# View(Carseats)
 ? Carseats
 
 ## Exercice 
@@ -100,10 +100,10 @@ XX <- model.matrix(Sales ~., data = Carseats)[,-1] # Cette fonction construit la
 # de ses modalités (la première modalité est supprimée)
 # on supprime la première colonne correspondant à l'intercept
 
-View(XX)
+# View(XX)
 Carseats.num.data <- cbind(Sales = Carseats[,"Sales"],XX)
 Carseats.num.data <- as.data.frame(Carseats.num.data) # Bd constituée que de variables numériques
-View(Carseats.num.data)
+# View(Carseats.num.data)
 tests.Fisher2 <- anova(lm(Sales~., data = Carseats.num.data))
 tests.Fisher2
 m <- nrow(tests.Fisher2)

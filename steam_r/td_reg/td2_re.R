@@ -4,13 +4,13 @@
 rm(list = ls())
 library(ISLR)
 str(Carseats)
-View(Carseats)
+# View(Carseats)
 
 #### Exercice 1 ####
 #1
 #La fonction regsubsets() : sélection de variables explicatives numériques
 XX <- model.matrix(Sales ~., data = Carseats) #Matrice de design
-View(XX)
+# View(XX)
 p <- ncol(XX)-1 #Nombre de variables numériques explicatives dans le modèle de RLM complet
 p
 require(leaps)  
@@ -53,7 +53,7 @@ XX <- model.matrix(Sales ~., data = Carseats)[,-1] #Cette fonction construit la 
 #on supprime la première colonne correspondant à l'intercept
 Carseats.num.data <- cbind(Sales = Carseats[,"Sales"],XX)
 Carseats.num.data <- as.data.frame(Carseats.num.data) #Bd constituée que de variables numériques
-View(Carseats.num.data)
+# View(Carseats.num.data)
 
 select.modele.aic <- glmulti(Sales ~., data = Carseats.num.data, level = 1, 
                              fitfunction = lm, crit = "aic", plotty = FALSE, method = "h")

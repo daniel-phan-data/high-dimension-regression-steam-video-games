@@ -12,7 +12,7 @@
 packages <- c(
   "tidyverse", "DataExplorer", "dplyr", "here", "ggplot2", 
   "nortest", "ggcorrplot", "corrplot", "ISLR", "lmtest", 
-  "leaps", "glmulti", "forcats"
+  "leaps", "glmulti", "forcats", "nlme"
 )
 
 
