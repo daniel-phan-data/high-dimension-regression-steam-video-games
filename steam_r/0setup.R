@@ -1,10 +1,11 @@
 ## copy and paste IMPORTS at the beginning of your scripts ----
 # ## IMPORTS ----
 # rm(list = ls())
+# graphics.off()
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 # temp_env <- new.env()
 # source("0setup.R", local = temp_env)
-# gamesc <- temp_env$setup()
+# games <- temp_env$setup()
 # rm(temp_env)
 
 ## list of packages needed ----
@@ -12,7 +13,8 @@
 packages <- c(
   "tidyverse", "DataExplorer", "dplyr", "here", "ggplot2", 
   "nortest", "ggcorrplot", "corrplot", "ISLR", "lmtest", 
-  "leaps", "glmulti", "forcats", "nlme"
+  "leaps", "glmulti", "forcats", "nlme", "car", "gglasso",
+  "glmnet", "boot"
 )
 
 

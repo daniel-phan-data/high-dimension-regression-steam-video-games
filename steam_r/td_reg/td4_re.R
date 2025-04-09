@@ -9,7 +9,7 @@ str(Carseats)
 #### Exercice 1 ####
 #1
 XX <- model.matrix(Sales ~., data = Carseats)[,-1] #matrice de design sans l'intercept
-View(XX)
+# View(XX)
 require(glmnet)
 reg.ridge <- glmnet(x = scale(XX), y = Carseats[,"Sales"], alpha = 0)
 par(mfrow = c(1,2))

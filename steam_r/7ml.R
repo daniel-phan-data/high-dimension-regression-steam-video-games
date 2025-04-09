@@ -70,6 +70,7 @@ print(variables)
 modele.RLM <- create_ml(gamesc, Y, X, categories)
 
 summary(modele.RLM)
+
 #3.i
 les_residus <- modele.RLM$residuals
 # test autocorrelation des erreur

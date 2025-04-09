@@ -5,6 +5,7 @@
 .RData
 .Rhistory
 .Rproj.user/
+glmulti*
 
 # Ignore R Markdown cache and output files
 *.Rproj
