@@ -10,6 +10,7 @@ rm(temp_env)
 gamesc <- games %>% select(Average.playtime.forever, Estimated.owners, Peak.CCU,
                             Price, Recommendations, Required.age,
                             Positive, Negative)
+
 # function to create a linear model using lm
 create_lm <- function(dataset, Y, X, categories) {
     if (length(categories) == 0) {
@@ -79,7 +80,7 @@ check_lm_hypotheses <- function(model, data) {
     seuil <- 4 / nrow(data)
     cat("\nObservations influentes (Cook > 4/n) :\n")
     influents <- which(cooks > seuil)
-    # print(influents)
+    print(influents)
     
     plot(cooks, type = "h",
          main = "7. Distance de Cook avec seuil 4/n",

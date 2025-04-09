@@ -71,12 +71,12 @@ load_and_clean_games <- function() {
     mutate(rating = factor(rating, levels = rating_levels, ordered = TRUE))
   
   # reorganize columns
-  gamesc <- gamesc %>%
-    select(Name, Publishers, Average.playtime.forever, Estimated.owners,
-           Peak.CCU, rating, Price,
-           Recommendations, Required.age,
-           Positive, Negative,
-           total_reviews, positive_ratio)
+  # gamesc <- gamesc %>%
+  #   select(Name, Publishers, Average.playtime.forever, Estimated.owners,
+  #          Peak.CCU, rating, Price,
+  #          Recommendations, Required.age,
+  #          Positive, Negative,
+  #          total_reviews, positive_ratio)
   return(gamesc)
 }
 

@@ -102,7 +102,7 @@ variables <- c(Y, X, categories)  # Combined variables list
 print(variables)
 variables_to_transform <- c("Average.playtime.forever","Peak.CCU",
                             "Positive", "Negative", "Recommendations", "Price")
-#log, normalisation, standardization
+#application log
 gamesc1 <- apply_transformations(gamesc, variables_to_transform)
 modele.RLM <- create_ml(gamesc1, Y, X, categories)
 
@@ -177,3 +177,4 @@ plot(modele.RLM, 3)
 # plots differents, mais meme probleme de coefficient de determination trop bas
 # expliquer l utilite des 3 transformations
 # attentions p values des categories d estimated owners
+
