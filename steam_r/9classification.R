@@ -1,47 +1,96 @@
+## IMPORTS ----
+rm(list = ls())
+graphics.off()
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+temp_env <- new.env()
+source("0setup.R", local = temp_env)
+games <- temp_env$setup()
+rm(temp_env)
+gamesc <- games %>%
+    select(Average.playtime.forever, Estimated.owners,
+           Peak.CCU, rating, Price,
+           Recommendations, Required.age,
+           Positive, Negative,
+           total_reviews, positive_ratio)
 
-# Installer et charger le package nnet si ce n'est pas encore fait
-# install.packages("nnet")  # À décommenter si le package n'est pas installé
-library(nnet)
-
-# Exemple de jeu de données (à remplacer par tes propres données)
-# Imaginons que dataset soit ta base de données avec les colonnes nécessaires
-set.seed(42)  # Pour la reproductibilité
-dataset <- data.frame(
-    Estimated.owners = factor(sample(c("1000000 - 2000000", "10000000 - 20000000", "20000000 - 50000000", 
-                                       "50000000 - 100000000", "2000000 - 5000000", "5000000 - 10000000"), 
-                                     100, replace = TRUE)),
-    Peak.CCU = rnorm(100, mean = 1000, sd = 300),
-    Positive = rnorm(100, mean = 10000, sd = 2000),
-    Negative = rnorm(100, mean = 500, sd = 100),
-    Recommendations = rnorm(100, mean = 300, sd = 50),
-    Price = rnorm(100, mean = 20, sd = 5),
-    Required.age = rnorm(100, mean = 25, sd = 3)
+gamesc$Estimated.owners <- as.factor(gamesc$Estimated.owners)
+levels(gamesc$Estimated.owners)
+gamesc$Estimated.owners <- 
+    fct_recode(gamesc$Estimated.owners,
+               "0-20k" = "0 - 20000",
+               "20k-50k" = "20000 - 50000",
+               "50k-100k" = "50000 - 100000",
+               "100k-200k" = "100000 - 200000",
+               "200k-500k" = "200000 - 500000",
+               "500k-1M" = "500000 - 1000000",
+               "1M-2M" = "1000000 - 2000000",
+               "2M-5M" = "2000000 - 5000000",
+               "5M-10M" = "5000000 - 10000000",
+               "10M-20M" = "10000000 - 20000000",
+               "20M-50M" = "20000000 - 50000000",
+               "50M-100M" = "50000000 - 100000000",
+               "100M-200M" = "100000000 - 200000000"
 )
 
-# Ajuster un modèle multinomial
-modele_multinom <- multinom(Estimated.owners ~ Peak.CCU + Positive + Negative + Recommendations + Price + Required.age, data = dataset)
 
-# Résumé du modèle
-summary(modele_multinom)
+# Function to create a multinom model
+create_multinom <- function(dataset, Y, X, categories) {
+    if (length(categories) == 0) {
+        formula <- as.formula(paste(Y, "~", paste(X, collapse = "+")))
+    } else {
+        formula <- as.formula(paste(Y, "~", paste(c(X, categories), collapse = "+")))
+    }
+    model_multinom <- multinom(formula = formula, data = dataset)
+    return(model_multinom)
+}
 
-# Prédire la catégorie la plus probable
-predictions <- predict(modele_multinom, newdata = dataset)
+## exemple create_multinom ----
+names(gamesc)
+Y <- "Estimated.owners"
+X <- c("Average.playtime.forever", "Peak.CCU", "Positive", "Negative", "Recommendations",
+       "Price", "Required.age")
+categories <- c()
+variables <- c(Y, X, categories)  # Combined variables list
 
-# Afficher les premières prédictions
-head(predictions)
 
-# Prédire les probabilités associées à chaque catégorie
-probabilites <- predict(modele_multinom, newdata = dataset, type = "probs")
+modele_logit <- create_multinom(gamesc, Y, X, categories)
 
-# Afficher les premières probabilités pour les 5 premières observations
-head(probabilites)
+## multinom complet
+modele_logit <- multinom(formula = Estimated.owners ~ ., data = gamesc)
 
-# Matrice de confusion pour évaluer la performance du modèle
-confusion_matrix <- table(Predicted = predictions, Actual = dataset$Estimated.owners)
+# 3. Test de significativité des coefficients (z, p-value)
+z <- summary(modele_logit)$coefficients / summary(modele_logit)$standard.errors
+p_values <- 2 * (1 - pnorm(abs(z)))
 
-# Afficher la matrice de confusion
-print(confusion_matrix)
+# Affichage lisible des p-values
+cat("\n--- P-values des coefficients ---\n")
+print(round(p_values, 4))
 
-# Calculer l'exactitude globale du modèle
-accuracy <- sum(predictions == dataset$Estimated.owners) / nrow(dataset)
-cat("L'exactitude du modèle est de : ", accuracy, "\n")
+# 5. AIC du modèle
+cat("\n--- AIC du modèle ---\n")
+print(AIC(modele_logit))
+
+# 6. Pseudo R² (comme R² en régression linéaire)
+cat("\n--- Pseudo R² ---\n")
+print(pR2(modele_logit))
+
+# 7. VIF pour détecter la multicolinéarité
+# On doit repasser par une régression linéaire avec les mêmes variables
+# (car car::vif() ne marche pas sur multinom())
+mod_lineaire_temp <- lm(
+    as.numeric(as.factor(Estimated.owners)) ~ Peak.CCU + Positive + Negative + Recommendations + Price + Required.age,
+    data = gamesc
+)
+cat("\n--- VIF (multicolinéarité) ---\n")
+print(vif(mod_lineaire_temp))
+
+# 8. Qualité de prédiction : Matrice de confusion
+# pas tres visible
+pred <- predict(modele_logit)
+cat("\n--- Matrice de confusion ---\n")
+print(table(Predicted = pred, Actual = gamesc$Estimated.owners))
+
+# 9. Taux de bonne classification
+accuracy <- mean(pred == gamesc$Estimated.owners)
+cat("\n--- Taux de bonnes prédictions ---\n")
+print(round(accuracy, 4))

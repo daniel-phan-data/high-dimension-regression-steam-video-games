@@ -22,7 +22,7 @@ packages <- c(
   "nortest", "ggcorrplot", "corrplot", "ISLR", "lmtest", 
   "leaps", "glmulti", "forcats", "nlme", "car", "gglasso",
   "glmnet", "boot", "rpart", "rpart.plot", "randomForest",
-  "nnet"
+  "nnet", "forcats", "rsq", "pscl"
 )
 
 
@@ -53,10 +53,7 @@ install_and_load <- function(packages) {
 load_and_clean_games <- function() {
   filepath <- "../steam_data/games.csv"
   games <- read.csv(filepath)
-  games <- games %>% filter(Average.playtime.forever>0 & Peak.CCU>0)
-  #factoring some variables just in case
-  games$Estimated.owners <- factor(games$Estimated.owners)
-  gamesc <- games %>% filter(Estimated.owners != "0 - 20000")
+  gamesc <- games %>% filter(Average.playtime.forever>0 & Peak.CCU>0)
   gamesc[is.na(gamesc)] <- 0
   total_reviews <- gamesc$Positive + gamesc$Negative
   positive_ratio <- (gamesc$Positive / total_reviews) * 100  # ratio of positive reviews
@@ -77,6 +74,7 @@ load_and_clean_games <- function() {
   # rating as factor
   gamesc <- gamesc %>%
     mutate(rating = factor(rating, levels = rating_levels, ordered = TRUE))
+  gamesc <- na.omit(gamesc)
   return(gamesc)
 }
 
