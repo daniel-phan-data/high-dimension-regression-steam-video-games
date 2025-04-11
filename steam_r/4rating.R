@@ -1,14 +1,18 @@
-##library imports ----
-library("tidyverse")
-library("DataExplorer")
-library(dplyr)
-##data import ----
-filepath <- "../steam_data/games.csv"
-games <- read.csv(filepath)
+####  outdated file
+#### rating function was added to 0setup instead
 
-##cleaning using steam_clean.R ----
-source("0clean.R")  # Source the cleaning file
-gamesc <- clean_games(games)
+## IMPORTS ----
+rm(list = ls())
+graphics.off()
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+temp_env <- new.env()
+source("0setup.R", local = temp_env)
+games <- temp_env$setup()
+rm(temp_env)
+gamesc <- games %>% select(Average.playtime.forever, Estimated.owners,
+                           Peak.CCU,Price, Recommendations,
+                           Required.age, Positive, Negative)
+
 ##create rating variable ----
 create_rating <- function(Positive, Negative) {
   total_reviews <- Positive + Negative

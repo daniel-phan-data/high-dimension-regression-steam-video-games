@@ -1,15 +1,15 @@
-library("tidyverse")
-library("DataExplorer")
-library(dplyr)
+## IMPORTS ----
+rm(list = ls())
+graphics.off()
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+temp_env <- new.env()
+source("0setup.R", local = temp_env)
+games <- temp_env$setup()
+rm(temp_env)
+cleaned_games <- games %>% select(Average.playtime.forever, Estimated.owners,
+                           Peak.CCU,Price, Recommendations,
+                           Required.age, Positive, Negative)
 
-filepath <- "../steam_data/games.csv"
-games <- read.csv(filepath)
-#filepath <- here("steam_data", "games.csv")  # perle's import
-#games <- read.csv(filepath)
-
-##cleaning using steam_clean.R ----
-source("steam_clean.R")  # Source the cleaning file
-cleaned_games <- clean_games(games)
 ## Peak.CCU density log10 ----
 ggplot(cleaned_games, aes(x = Peak.CCU)) + 
   geom_density(fill = "blue", alpha = 0.3) + 

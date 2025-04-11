@@ -1,17 +1,15 @@
-##library and data import ----
-library("tidyverse")
-library("DataExplorer")
-library(dplyr)
-library(here)
-library(ggplot2)
-library(nortest)
-library(corrplot)
-library(ggcorrplot)
-
-##load cleaned data ----
+## IMPORTS ----
 rm(list = ls())
-source("0clean.R")  # Source the cleaning file
-cleaned_games <- clean_games()
+graphics.off()
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+temp_env <- new.env()
+source("0setup.R", local = temp_env)
+games <- temp_env$setup()
+rm(temp_env)
+
+gamesc <- games %>% select(Average.playtime.forever, Estimated.owners,
+                           Peak.CCU,Price, Recommendations,
+                           Required.age, Positive, Negative)
 
 ####correlation matrix ####
 
@@ -51,3 +49,4 @@ corrplot(correlation_matrix, method = "circle")
 
 # Plot the correlation matrix without the mirror image
 corrplot(correlation_matrix, method = "circle", type = "upper")
+

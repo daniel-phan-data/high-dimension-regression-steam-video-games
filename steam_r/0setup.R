@@ -7,6 +7,13 @@
 # source("0setup.R", local = temp_env)
 # games <- temp_env$setup()
 # rm(temp_env)
+# gamesc <- games %>%
+#   select(Name, Publishers, Average.playtime.forever, Estimated.owners,
+#          Peak.CCU, rating, Price,
+#          Recommendations, Required.age,
+#          Positive, Negative,
+#          total_reviews, positive_ratio)
+
 
 ## list of packages needed ----
 
@@ -69,14 +76,6 @@ load_and_clean_games <- function() {
   # rating as factor
   gamesc <- gamesc %>%
     mutate(rating = factor(rating, levels = rating_levels, ordered = TRUE))
-  
-  # reorganize columns
-  # gamesc <- gamesc %>%
-  #   select(Name, Publishers, Average.playtime.forever, Estimated.owners,
-  #          Peak.CCU, rating, Price,
-  #          Recommendations, Required.age,
-  #          Positive, Negative,
-  #          total_reviews, positive_ratio)
   return(gamesc)
 }
 

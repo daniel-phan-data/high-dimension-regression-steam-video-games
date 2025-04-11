@@ -6,10 +6,12 @@ temp_env <- new.env()
 source("0setup.R", local = temp_env)
 games <- temp_env$setup()
 rm(temp_env)
-
-gamesc <- games %>% select(Average.playtime.forever, Estimated.owners, Peak.CCU,
-                           Price, Recommendations, Required.age,
-                           Positive, Negative)
+gamesc <- games %>%
+  select(Name, Publishers, Average.playtime.forever, Estimated.owners,
+         Peak.CCU, rating, Price,
+         Recommendations, Required.age,
+         Positive, Negative,
+         total_reviews, positive_ratio)
 
 select_model_glmulti <- function(data, criterion = "aic", level = 1) {
     result <- glmulti(Average.playtime.forever ~ ., data = data, level = level,

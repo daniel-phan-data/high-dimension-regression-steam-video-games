@@ -1,10 +1,17 @@
 ## IMPORTS ----
 rm(list = ls())
+graphics.off()
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 temp_env <- new.env()
 source("0setup.R", local = temp_env)
-gamesc <- temp_env$setup()
+games <- temp_env$setup()
 rm(temp_env)
+gamesc <- games %>%
+  select(Name, Publishers, Average.playtime.forever, Estimated.owners,
+         Peak.CCU, rating, Price,
+         Recommendations, Required.age,
+         Positive, Negative,
+         total_reviews, positive_ratio)
 
 ## normality tests for quantitative variables (bivar tests) ----
 #normality test

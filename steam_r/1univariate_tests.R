@@ -1,23 +1,17 @@
-##library imports ----
-library("tidyverse")
-library("DataExplorer")
-library(dplyr)
-library(here)
-library(ggplot2)
-library(nortest)
-library(ggcorrplot)
-library(corrplot)
+## IMPORTS ----
+rm(list = ls())
+graphics.off()
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+temp_env <- new.env()
+source("0setup.R", local = temp_env)
+games <- temp_env$setup()
+rm(temp_env)
 
-##data import ----
-filepath <- "../steam_data/games.csv"
-games <- read.csv(filepath)
-#filepath <- here("steam_data", "games.csv")  # perle's import
-#games <- read.csv(filepath)
+cleaned_games <- games %>% select(Average.playtime.forever, Estimated.owners, Peak.CCU,
+                           Price, Recommendations, Required.age,
+                           Positive, Negative)
 
-##cleaning using steam_clean.R -> cleaned_games ----
-source("steam_clean.R")  # Source the cleaning file
-cleaned_games <- clean_games(games)
-##Univariate ----
+
 names(cleaned_games)
 summary(cleaned_games)
 

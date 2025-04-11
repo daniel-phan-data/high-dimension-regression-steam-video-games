@@ -1,26 +1,4 @@
-## IMPORTS ----
-rm(list = ls())
-graphics.off()
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-temp_env <- new.env()
-source("0setup.R", local = temp_env)
-games <- temp_env$setup()
-rm(temp_env)
-
-gamesc <- games %>% select(Average.playtime.forever, Estimated.owners, Peak.CCU,
-                            Price, Recommendations, Required.age,
-                            Positive, Negative)
-
-# function to create a linear model using lm
-create_lm <- function(dataset, Y, X, categories) {
-    if (length(categories) == 0) {
-        formula <- as.formula(paste(Y, "~", paste(X, collapse = "+")))
-    } else {
-        formula <- as.formula(paste(Y, "~", paste(c(X, categories), collapse = "+")))
-    }
-    modele.RLM <- lm(formula = formula, data = dataset)
-    return(modele.RLM)
-}
+#### EXECUTER 7 ml avant 8hypotheses_lm.R
 
 # function to check lm assumptions
 check_lm_hypotheses <- function(model, data) {
@@ -30,8 +8,6 @@ check_lm_hypotheses <- function(model, data) {
     # le nuage de points doit etre centre autour de 0 sans motif evident
     # sinon la relation n est pas bien modelise, non-linearite possible
     plot(model, which = 1, main = "1. Résidus vs valeurs ajustées")
-    # ca doit suivre la ligne, sinon residus anormaux
-    plot(model, which = 2, main = "2. QQ-plot des résidus")
     
     # hypothese 2: homoscedasticite des erreurs
     # ecart type constant peu importe la valeur ajustee
@@ -55,14 +31,24 @@ check_lm_hypotheses <- function(model, data) {
     # si proche de 0 : autocorrelation positive. si > 2.5 : autocorrelation negative   
     cat("\nTest de Durbin-Watson (attendu ≈ 2) :\n")
     print(dwtest(model))
+    dwtest(modele.RLM, alternative = c("two.sided"))
     # ACF : si les barres depassent, il y a autocorrelation des erreurs
     acf(residuals(model), main = "5. ACF des résidus")
     
     # hypothese 4: normalite des erreurs
-    # histogramme : doit etre symetrique et en forme de cloche
-    hist(residuals(model), breaks = 50,
-         main = "6. Histogramme des résidus",
-         xlab = "Résidus", col = "lightblue", border = "white")
+    # ca doit suivre la ligne, sinon residus anormaux
+    plot(model, which = 2, main = "2. QQ-plot des résidus")
+    residus <- model$residuals
+    #boxplot des residus
+    boxplot(residus, main = "Boxplot des résidus")
+    #histogramme "naif"
+    hist(residus[residus < quantile(residus, 1)], breaks = 50,
+         main = "Histogramme des résidus",
+         xlab = "Résidus", col = "green", border = "green")
+    #histogramme plus lisible en retirant le top 1% qui casse tout
+    hist(residus[residus < quantile(residus, 0.99)], breaks = 50,
+         main = "Histogramme des résidus (sans top 1%)",
+         xlab = "Résidus (censurés à 99%)", col = "blue", border = "blue")
     
     # hypothese 5 multicolinearite
     # VIF (Variance Inflation Factor) : mesure le lien entre les variables explicatives
@@ -73,14 +59,14 @@ check_lm_hypotheses <- function(model, data) {
     cat("\nVariables avec VIF > 5 :\n")
     print(names(vif_vals[vif_vals > 5]))
     
-    # ➤ OBSERVATIONS INFLUENTES : Distance de Cook
+    # observations influentes: distances de Cook
     # indique si certaines observations influencent beaucoup le modele
     # attention aux points au dessus de la ligne rouge
     cooks <- cooks.distance(model)
     seuil <- 4 / nrow(data)
     cat("\nObservations influentes (Cook > 4/n) :\n")
-    influents <- which(cooks > seuil)
-    print(influents)
+    # influents <- which(cooks > seuil)
+    # print(influents)
     
     plot(cooks, type = "h",
          main = "7. Distance de Cook avec seuil 4/n",
@@ -90,7 +76,8 @@ check_lm_hypotheses <- function(model, data) {
            col = "red", lty = 2, lwd = 2)
 }
 
-## modele naif ----
+## exemple d utilisation de check_lm_hypotheses ----
+# modele naif pour le test
 names(gamesc)
 Y <- "Average.playtime.forever"
 X <- c("Peak.CCU", "Positive", "Negative", "Recommendations", "Price", "Required.age")
@@ -100,10 +87,5 @@ print(variables)
 modele.RLM <- create_lm(gamesc, Y, X, categories)
 summary(modele.RLM)
 
+#test fonction hypothese
 check_lm_hypotheses(modele.RLM, gamesc)
-
-# plot entre peak ccu et avg playtime
-ggplot(gamesc, aes(x = Peak.CCU, y = Average.playtime.forever)) + 
-    geom_point() + geom_smooth(method = "lm") +
-    labs(title = "Relation entre Peak.CCU et avg_playtime")
-
