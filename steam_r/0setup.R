@@ -21,7 +21,8 @@ packages <- c(
   "tidyverse", "DataExplorer", "dplyr", "here", "ggplot2", 
   "nortest", "ggcorrplot", "corrplot", "ISLR", "lmtest", 
   "leaps", "glmulti", "forcats", "nlme", "car", "gglasso",
-  "glmnet", "boot"
+  "glmnet", "boot", "rpart", "rpart.plot", "randomForest",
+  "nnet"
 )
 
 
