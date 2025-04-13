@@ -58,14 +58,56 @@ def print_required_age(cleaned_games: pd.DataFrame) -> None:
     plt.tight_layout()
     plt.show()
 
+def print_owners(cleaned_games):
+    # Dictionnaire de renommage
+    new_labels = {
+        "0 - 20000": "0-20k",
+        "20000 - 50000": "20k-50k",
+        "50000 - 100000": "50k-100k",
+        "100000 - 200000": "100k-200k",
+        "200000 - 500000": "200k-500k",
+        "500000 - 1000000": "500k-1M",
+        "1000000 - 2000000": "1M-2M",
+        "2000000 - 5000000": "2M-5M",
+        "5000000 - 10000000": "5M-10M",
+        "10000000 - 20000000": "10M-20M",
+        "20000000 - 50000000": "20M-50M",
+        "50000000 - 100000000": "50M-100M",
+        "100000000 - 200000000": "100M-200M"
+    }
+
+    # Appliquer le renommage
+    cleaned_games["Estimated owners2"] = cleaned_games["Estimated owners"].map(new_labels)
+
+    # Définir l'ordre des catégories
+    ordered_categories = list(new_labels.values())
+    cleaned_games["Estimated owners2"] = pd.Categorical(
+        cleaned_games["Estimated owners2"],
+        categories=ordered_categories,
+        ordered=True
+    )
+
+    # Afficher les niveaux
+    print("Catégories ordonnées :", cleaned_games["Estimated owners2"].cat.categories)
+
+    # Tracer le graphique
+    plt.figure(figsize=(10, 6))
+    sns.countplot(data=cleaned_games, x="Estimated owners2", color="steelblue")
+    plt.title("Distribution of Estimated Owners")
+    plt.xlabel("Estimated Owners")
+    plt.ylabel("Number of Games")
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+    plt.show()
+
 if __name__ == "__main__":
     filepath = "../steam_data/games.csv"
     games = load_and_clean_games(filepath)
-    # print(games.head())
     cleaned_games = games[[
         "Average playtime forever", "Estimated owners",
         "Peak CCU", "Price", "Recommendations", "Required age",
         "Positive", "Negative"
     ]]
-    # print_boxplots(cleaned_games)
+    print_boxplots(cleaned_games)
     print_required_age(cleaned_games)
+    print_owners(cleaned_games)
