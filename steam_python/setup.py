@@ -89,6 +89,20 @@ def load_and_clean_games(filepath):
     df = df.reset_index(drop=True)
     return df
 
+import re
+
+def clean_column_names(df):
+    """
+    Renomme les colonnes en snake_case sans espaces ni majuscules.
+    Exemple : "Estimated Owners" → "estimated_owners"
+    """
+    new_columns = {
+        col: re.sub(r'\W+', '_', col.strip().lower())  # supprime les caractères non alphanumériques et met en snake_case
+        for col in df.columns
+    }
+    df = df.rename(columns=new_columns)
+    return df
+
 if __name__ == "__main__":
     filepath = "../steam_data/games.csv"
     gamesc = load_and_clean_games(filepath)
