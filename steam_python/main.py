@@ -15,3 +15,4 @@ if __name__ == "__main__":
         "Peak CCU", "Price", "Recommendations", "Required age",
         "Positive", "Negative"
     ]]
+    gamesc = clean_column_names(gamesc)
