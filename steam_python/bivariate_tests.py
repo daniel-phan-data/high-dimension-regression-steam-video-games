@@ -1,7 +1,5 @@
 import os
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 from scipy.stats import shapiro, spearmanr, kruskal
 import warnings

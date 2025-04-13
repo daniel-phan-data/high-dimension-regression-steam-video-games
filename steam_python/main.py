@@ -1,5 +1,4 @@
 import os
-import pandas as pd
 
 from setup import load_and_clean_games, clean_column_names
 

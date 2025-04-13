@@ -5,7 +5,6 @@ import statsmodels.api as sm
 from itertools import combinations
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
 
 from setup import load_and_clean_games, clean_column_names
 
@@ -87,7 +86,7 @@ def turn_data_to_num(data, target_col='average_playtime_forever'):
     y = data[target_col]
 
     categorical_cols = X.select_dtypes(include=['object', 'category']).columns.tolist()
-    numeric_cols = X.select_dtypes(include=[np.number]).columns.tolist()
+    # numeric_cols = X.select_dtypes(include=[np.number]).columns.tolist()
 
     # Pipeline pour one-hot encoding
     transformer = ColumnTransformer(transformers=[

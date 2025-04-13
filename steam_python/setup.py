@@ -1,6 +1,6 @@
 import pandas as pd
-import numpy as np
 import os
+import re
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -88,8 +88,6 @@ def load_and_clean_games(filepath):
     ]]
     df = df.reset_index(drop=True)
     return df
-
-import re
 
 def clean_column_names(df):
     """

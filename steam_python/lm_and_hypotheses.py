@@ -3,13 +3,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-import warnings
-from scipy.stats import shapiro, spearmanr, kruskal, zscore
+from scipy.stats import zscore
 import statsmodels.formula.api as smf
 from statsmodels.stats.stattools import durbin_watson
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 import statsmodels.api as sm
-from statsmodels.api import OLS, add_constant
 
 from setup import load_and_clean_games, clean_column_names
 
