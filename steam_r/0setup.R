@@ -22,7 +22,8 @@ packages <- c(
   "nortest", "ggcorrplot", "corrplot", "ISLR", "lmtest", 
   "leaps", "glmulti", "forcats", "nlme", "car", "gglasso",
   "glmnet", "boot", "rpart", "rpart.plot", "randomForest",
-  "nnet", "forcats", "rsq", "pscl"
+  "nnet", "forcats", "rsq", "pscl", "stringr", "forcats",
+  "readr"
 )
 
 
@@ -75,6 +76,26 @@ load_and_clean_games <- function() {
   gamesc <- gamesc %>%
     mutate(rating = factor(rating, levels = rating_levels, ordered = TRUE))
   gamesc <- na.omit(gamesc)
+  
+  #estimated owner as factor
+  gamesc$Estimated.owners <- as.factor(gamesc$Estimated.owners)
+  gamesc$Estimated.owners <- 
+    fct_recode(gamesc$Estimated.owners,
+               "0-20k" = "0 - 20000",
+               "20k-50k" = "20000 - 50000",
+               "50k-100k" = "50000 - 100000",
+               "100k-200k" = "100000 - 200000",
+               "200k-500k" = "200000 - 500000",
+               "500k-1M" = "500000 - 1000000",
+               "1M-2M" = "1000000 - 2000000",
+               "2M-5M" = "2000000 - 5000000",
+               "5M-10M" = "5000000 - 10000000",
+               "10M-20M" = "10000000 - 20000000",
+               "20M-50M" = "20000000 - 50000000",
+               "50M-100M" = "50000000 - 100000000",
+               "100M-200M" = "100000000 - 200000000"
+    )
+  
   return(gamesc)
 }
 
