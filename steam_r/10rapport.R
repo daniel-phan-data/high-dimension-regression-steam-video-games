@@ -13,6 +13,8 @@ gamesc <- games %>%
            Positive, Negative,
            total_reviews, positive_ratio)
 
+summary(gamesc)
+
 # Function to create a linear model
 create_lm <- function(dataset, Y, X, categories) {
     if (length(categories) == 0) {
@@ -147,24 +149,42 @@ clean_model <- function(model, dataset) {
     return(list(data = cleaned_data, removed = idx_to_remove))
 }
 
-## first simple model ----
-names(gamesc)
+## 1 first simple model ----
 Y <- "Average.playtime.forever"
 X <- c("Peak.CCU", "Positive", "Negative", "Recommendations", "Price", "Required.age")
 categories <- c("Estimated.owners")
-variables <- c(Y, X, categories)  # Combined variables list
-# print(variables)
+
 model <- create_lm(gamesc, Y, X, categories)
 summary(model)
 check_lm_hypotheses(model, gamesc)
 
-## full model ----
-names(gamesc)
+## 2 model with log transformation to be closer to linearity ----
 Y <- "Average.playtime.forever"
-X <- c("Peak.CCU", "Positive", "Negative", "Recommendations", "Price", "Required.age",
-       "total_reviews", "positive_ratio")
-categories <- c("Estimated.owners", "rating")
-variables <- c(Y, X, categories)  # Combined variables list
-print(variables)
-model <- create_lm(gamesc, Y, X, categories)
-summary(model)
+X <- c("Peak.CCU", "Positive", "Negative", "Recommendations",
+       "Price", "Required.age")
+categories <- c("Estimated.owners")
+variables_to_transform <- c("Average.playtime.forever","Peak.CCU",
+                            "Positive", "Negative", "Recommendations", "Price")
+# log tranformations
+gamesc_log <- apply_transformations(gamesc, variables_to_transform)
+model_log <- create_lm(gamesc_log, Y, X, categories)
+
+summary(model_log)
+check_lm_hypotheses(model_log, gamesc_log)
+
+
+## third model without outliers, high influence point, and extreme errors ----
+cleaning <- clean_model(model_log, gamesc_log)
+gamesc_log_clean <- cleaning$data
+model_log_clean <- create_lm(gamesc_log_clean, Y, X, categories)
+
+summary(model_log_clean)
+# cat("Nombre de points retirés :", length(cleaning$removed), "\n")
+
+## fourth model with only ubisoft games ----
+
+## testing selection algorithms with ubisoft games ----
+
+## classification to predict estimated owners ----
+
+## polynomial models ----

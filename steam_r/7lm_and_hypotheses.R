@@ -205,8 +205,6 @@ model_log_clean <- create_lm(gamesc_log_clean, Y, X, categories)
 summary(model_log_clean)
 cat("Nombre de points retirés :", length(cleaning$removed), "\n")
 
-
-
 ## hypotheses check ----
 check_lm_hypotheses(model, gamesc)
 check_lm_hypotheses(model_log, gamesc_log)
