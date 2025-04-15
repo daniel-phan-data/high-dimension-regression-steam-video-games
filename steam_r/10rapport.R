@@ -163,12 +163,14 @@ Y <- "Average.playtime.forever"
 X <- c("Peak.CCU", "Positive", "Negative", "Recommendations",
        "Price", "Required.age")
 categories <- c("Estimated.owners")
+
+# log tranformations
 variables_to_transform <- c("Average.playtime.forever","Peak.CCU",
                             "Positive", "Negative", "Recommendations", "Price")
-# log tranformations
 gamesc_log <- apply_transformations(gamesc, variables_to_transform)
-model_log <- create_lm(gamesc_log, Y, X, categories)
 
+
+model_log <- create_lm(gamesc_log, Y, X, categories)
 summary(model_log)
 check_lm_hypotheses(model_log, gamesc_log)
 
@@ -182,6 +184,24 @@ summary(model_log_clean)
 # cat("Nombre de points retirés :", length(cleaning$removed), "\n")
 
 ## fourth model with only ubisoft games ----
+
+
+ubisoft <- games %>% filter(Publishers == "Ubisoft") %>%
+    select(Average.playtime.forever, Estimated.owners,
+           Peak.CCU, rating, Price,
+           Recommendations, Required.age,
+           Positive, Negative,
+           total_reviews, positive_ratio)
+Y <- "Average.playtime.forever"
+X <- c("Peak.CCU", "Recommendations", "Price", "Required.age")
+categories <- c()
+categories <- c("Estimated.owners", "rating")
+
+model_ubisoft <- create_lm(ubisoft, Y, X, categories)
+
+# View model summary# View model summarygamesc
+summary(model_ubisoft)
+check_lm_hypotheses(model_ubisoft, ubisoft)
 
 ## testing selection algorithms with ubisoft games ----
 
