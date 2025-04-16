@@ -10,6 +10,7 @@ glmulti*
 .venv*
 *.toml
 uv.lock
+steam_r/graph/
 
 # Ignore R Markdown cache and output files
 *.Rproj
