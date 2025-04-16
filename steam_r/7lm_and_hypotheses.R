@@ -7,7 +7,7 @@ source("0setup.R", local = temp_env)
 games <- temp_env$setup()
 rm(temp_env)
 gamesc <- games %>%
-  select(Name, Publishers, Average.playtime.forever, Estimated.owners,
+  select(Average.playtime.forever, Estimated.owners,
          Peak.CCU, rating, Price,
          Recommendations, Required.age,
          Positive, Negative,
@@ -20,9 +20,10 @@ create_lm <- function(dataset, Y, X, categories) {
     } else {
         formula <- as.formula(paste(Y, "~", paste(c(X, categories), collapse = "+")))
     }
-    modele.RLM <- lm(formula = formula, data = dataset)
-    return(modele.RLM)
+    model <- lm(formula = formula, data = dataset)
+    return(model)
 }
+
 # Function to graph and test model hypotheses
 check_lm_hypotheses <- function(model, data) {
   cat("Vérification des hypothèses pour le modèle :", deparse(model$call), "\n\n")
@@ -35,7 +36,7 @@ check_lm_hypotheses <- function(model, data) {
   # hypothese 2: homoscedasticite des erreurs
   # ecart type constant peu importe la valeur ajustee
   # entonnoir = heteroscedasticite
-  plot(model, which = 3, main = "3. Écarts à l'effet de levier")
+  plot(model, which = 3, main = "2.1. Écarts à l'effet de levier")
   
   # residus absolus vs valeurs ajustees
   # si c'est croissant/decroissant, la variance n est pas constante
@@ -44,7 +45,7 @@ check_lm_hypotheses <- function(model, data) {
   ggplot(data, aes(x = ajuste, y = residu_abs)) +
     geom_point(alpha = 0.4) +
     geom_smooth(method = "loess", col = "red") +
-    labs(title = "4. Hétéroscédasticité : résidus absolus vs ajustés",
+    labs(title = "2.2. Hétéroscédasticité : résidus absolus vs ajustés",
          x = "Valeurs ajustées", y = "Résidus absolus") +
     theme_minimal() -> p1
   print(p1)
@@ -56,11 +57,11 @@ check_lm_hypotheses <- function(model, data) {
   print(dwtest(model))
   dwtest(model, alternative = c("two.sided"))
   # ACF : si les barres depassent, il y a autocorrelation des erreurs
-  acf(residuals(model), main = "5. ACF des résidus")
+  acf(residuals(model), main = "3. ACF des résidus")
   
   # hypothese 4: normalite des erreurs
   # ca doit suivre la ligne, sinon residus anormaux
-  plot(model, which = 2, main = "2. QQ-plot des résidus")
+  plot(model, which = 2, main = "4. QQ-plot des résidus")
   residus <- model$residuals
   #boxplot des residus
   boxplot(residus, main = "Boxplot des résidus")
@@ -92,7 +93,7 @@ check_lm_hypotheses <- function(model, data) {
   # print(influents)
   
   plot(cooks, type = "h",
-       main = "7. Distance de Cook avec seuil 4/n",
+       main = "6. Distance de Cook avec seuil 4/n",
        ylab = "Distance de Cook", xlab = "Index de l'observation")
   abline(h = seuil, col = "red", lty = 2, lwd = 2)
   legend("topright", legend = paste0("Seuil = 4/n ≈ ", round(seuil, 5)),
@@ -203,8 +204,6 @@ model_log_clean <- create_lm(gamesc_log_clean, Y, X, categories)
 
 summary(model_log_clean)
 cat("Nombre de points retirés :", length(cleaning$removed), "\n")
-
-
 
 ## hypotheses check ----
 check_lm_hypotheses(model, gamesc)

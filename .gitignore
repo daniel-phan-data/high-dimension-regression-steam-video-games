@@ -5,6 +5,11 @@
 .RData
 .Rhistory
 .Rproj.user/
+glmulti*
+.ruff_cache
+.venv*
+*.toml
+uv.lock
 
 # Ignore R Markdown cache and output files
 *.Rproj
@@ -63,7 +68,6 @@ pip-wheel-metadata/
 # Ignore Python environment files
 .env
 .venv
-requirements.txt
 Pipfile
 Pipfile.lock
 

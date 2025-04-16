@@ -7,7 +7,7 @@ source("0setup.R", local = temp_env)
 games <- temp_env$setup()
 rm(temp_env)
 gamesc <- games %>%
-  select(Name, Publishers, Average.playtime.forever, Estimated.owners,
+  select(Average.playtime.forever, Estimated.owners,
          Peak.CCU, rating, Price,
          Recommendations, Required.age,
          Positive, Negative,

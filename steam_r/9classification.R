@@ -6,6 +6,8 @@ temp_env <- new.env()
 source("0setup.R", local = temp_env)
 games <- temp_env$setup()
 rm(temp_env)
+
+# Sélection des variables et nettoyage des colonnes
 gamesc <- games %>%
     select(Average.playtime.forever, Estimated.owners,
            Peak.CCU, rating, Price,
@@ -13,8 +15,8 @@ gamesc <- games %>%
            Positive, Negative,
            total_reviews, positive_ratio)
 
+# Recode de la variable 'Estimated.owners' pour correspondre au script Python
 gamesc$Estimated.owners <- as.factor(gamesc$Estimated.owners)
-levels(gamesc$Estimated.owners)
 gamesc$Estimated.owners <- 
     fct_recode(gamesc$Estimated.owners,
                "0-20k" = "0 - 20000",
@@ -30,33 +32,30 @@ gamesc$Estimated.owners <-
                "20M-50M" = "20000000 - 50000000",
                "50M-100M" = "50000000 - 100000000",
                "100M-200M" = "100000000 - 200000000"
-)
+    )
 
+# Fixer la classe de référence comme dans Python (0-20k)
+gamesc$Estimated.owners <- relevel(gamesc$Estimated.owners, ref = "0-20k")
 
-# Function to create a multinom model
-create_multinom <- function(dataset, Y, X, categories) {
-    if (length(categories) == 0) {
-        formula <- as.formula(paste(Y, "~", paste(X, collapse = "+")))
-    } else {
-        formula <- as.formula(paste(Y, "~", paste(c(X, categories), collapse = "+")))
-    }
-    model_multinom <- multinom(formula = formula, data = dataset)
-    return(model_multinom)
-}
+# Transformation log1p pour les variables continues (comme dans Python)
+gamesc$Average.playtime.forever <- log1p(gamesc$Average.playtime.forever)
+gamesc$Peak.CCU <- log1p(gamesc$Peak.CCU)
+gamesc$Positive <- log1p(gamesc$Positive)
+gamesc$Negative <- log1p(gamesc$Negative)
+gamesc$Recommendations <- log1p(gamesc$Recommendations)
+gamesc$Price <- log1p(gamesc$Price)
 
-## exemple create_multinom ----
-names(gamesc)
-Y <- "Estimated.owners"
-X <- c("Average.playtime.forever", "Peak.CCU", "Positive", "Negative", "Recommendations",
-       "Price", "Required.age")
-categories <- c()
-variables <- c(Y, X, categories)  # Combined variables list
+# Standardisation des variables continues
+X <- c("Average.playtime.forever", "Peak.CCU", "Positive", "Negative", 
+       "Recommendations", "Price", "Required.age")
 
+# Standardisation (équivalent de StandardScaler en Python)
+gamesc_scaled <- as.data.frame(scale(gamesc[, X]))
+gamesc_scaled$Estimated.owners <- gamesc$Estimated.owners
 
-modele_logit <- create_multinom(gamesc, Y, X, categories)
-
-## multinom complet
-modele_logit <- multinom(formula = Estimated.owners ~ ., data = gamesc)
+# Créer un modèle multinomial
+library(nnet)
+modele_logit <- multinom(Estimated.owners ~ ., data = gamesc_scaled)
 
 # 3. Test de significativité des coefficients (z, p-value)
 z <- summary(modele_logit)$coefficients / summary(modele_logit)$standard.errors
@@ -79,7 +78,7 @@ print(pR2(modele_logit))
 # (car car::vif() ne marche pas sur multinom())
 mod_lineaire_temp <- lm(
     as.numeric(as.factor(Estimated.owners)) ~ Peak.CCU + Positive + Negative + Recommendations + Price + Required.age,
-    data = gamesc
+    data = gamesc_scaled
 )
 cat("\n--- VIF (multicolinéarité) ---\n")
 print(vif(mod_lineaire_temp))
@@ -88,9 +87,9 @@ print(vif(mod_lineaire_temp))
 # pas tres visible
 pred <- predict(modele_logit)
 cat("\n--- Matrice de confusion ---\n")
-print(table(Predicted = pred, Actual = gamesc$Estimated.owners))
+print(table(Predicted = pred, Actual = gamesc_scaled$Estimated.owners))
 
 # 9. Taux de bonne classification
-accuracy <- mean(pred == gamesc$Estimated.owners)
+accuracy <- mean(pred == gamesc_scaled$Estimated.owners)
 cat("\n--- Taux de bonnes prédictions ---\n")
 print(round(accuracy, 4))
