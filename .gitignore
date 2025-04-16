@@ -8,6 +8,8 @@
 glmulti*
 .ruff_cache
 .venv*
+*.toml
+uv.lock
 
 # Ignore R Markdown cache and output files
 *.Rproj

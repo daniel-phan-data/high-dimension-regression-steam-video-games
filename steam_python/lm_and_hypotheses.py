@@ -11,10 +11,10 @@ import statsmodels.api as sm
 
 from setup import load_and_clean_games, clean_column_names
 
-# Set working directory
+# set working directory
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-# Fonction pour créer un modèle linéaire
+# create linear model with given dataset, Y, quantitative variables X and qualitative variables
 def create_lm(dataset, Y, X, categories):
     if len(categories) == 0:
         formula = f"{Y} ~ {' + '.join(X)}"
@@ -24,12 +24,13 @@ def create_lm(dataset, Y, X, categories):
     model = smf.ols(formula=formula, data=dataset).fit()
     return model
 
+# check essential hypotheses for given linear model and data
 def check_lm_hypotheses(model, data):
     print("Vérification des hypothèses pour le modèle :")
     print(model.model.formula)
     print("\n")
 
-    # 1. Résidus vs valeurs ajustées
+    # 1. residuals vs fitted values for linearity check
     fitted_vals = model.fittedvalues
     residuals = model.resid
     plt.figure(figsize=(6, 4))
@@ -40,12 +41,12 @@ def check_lm_hypotheses(model, data):
     plt.axhline(0, color='gray', linestyle='--')
     plt.show()
 
-    # 2. QQ-plot pour la normalité des résidus
+    # 2. residuals normality
     sm.qqplot(residuals, line='45', fit=True)
-    plt.title("2. QQ-plot des résidus")
+    plt.title("2. residuals QQ-plot")
     plt.show()
 
-    # 3. Scale-Location (sqrt(|residuals|) vs fitted)
+    # 3. residuals independance
     standardized_residuals = residuals / np.std(residuals)
     sqrt_std_resid = np.sqrt(np.abs(standardized_residuals))
     plt.figure(figsize=(6, 4))
@@ -56,7 +57,7 @@ def check_lm_hypotheses(model, data):
     plt.ylabel("√|Résidus standardisés|")
     plt.show()
 
-    # 4. Résidus absolus vs ajustés
+    # 4. homoscedasticity
     abs_resid = np.abs(residuals)
     plt.figure(figsize=(6, 4))
     sns.scatterplot(x=fitted_vals, y=abs_resid, alpha=0.4)
@@ -66,16 +67,16 @@ def check_lm_hypotheses(model, data):
     plt.ylabel("Résidus absolus")
     plt.show()
 
-    # 5. Autocorrélation : test de Durbin-Watson
+    # 5. autocorrelation with durbin-watson and acf
     dw_stat = durbin_watson(residuals)
     print(f"\n5. Durbin-Watson : {dw_stat:.3f} (attendu ≈ 2)\n")
 
-    # ACF des résidus
+    # ACF
     sm.graphics.tsa.plot_acf(residuals, lags=40)
     plt.title("5. ACF des résidus")
     plt.show()
 
-    # 6. Histogramme et boxplot des résidus
+    # 6. histogram and boxplot of residuals
     plt.figure(figsize=(4, 4))
     sns.boxplot(y=residuals)
     plt.title("Boxplot des résidus")
@@ -93,9 +94,8 @@ def check_lm_hypotheses(model, data):
     plt.xlabel("Résidus")
     plt.show()
 
-    # 7. Multicolinéarité (VIF)
+    # 7. multicolinearity with VIF
     print("7. VIF (Variance Inflation Factor) :")
-    # Ajoute une constante pour le calcul du VIF
     X = model.model.exog
     vif_data = pd.DataFrame()
     vif_data["Variable"] = model.model.exog_names
@@ -104,7 +104,7 @@ def check_lm_hypotheses(model, data):
     print("\nVariables avec VIF > 5 :")
     print(vif_data[vif_data["VIF"] > 5]["Variable"].tolist())
 
-    # 8. Distance de Cook
+    # 8. Cook's distance
     cooks_d = model.get_influence().cooks_distance[0]
     seuil = 4 / len(data)
     plt.figure(figsize=(8, 4))
@@ -117,7 +117,7 @@ def check_lm_hypotheses(model, data):
     plt.tight_layout()
     plt.show()
 
-# Appliquer des transformations à une liste de variables
+# apply transformation according to the specified method
 def apply_transformations(data, variables, method="log"):
     data = data.copy()
     for var in variables:
@@ -131,7 +131,7 @@ def apply_transformations(data, variables, method="log"):
             data[var] = (data[var] - data[var].min()) / (data[var].max() - data[var].min())
     return data
 
-# Détecter les points influents avec la distance de Cook
+# detects high influence point according to Cook's distance
 def detect_cook(model, threshold=None):
     influence = model.get_influence()
     cooks_d = influence.cooks_distance[0]
@@ -139,20 +139,20 @@ def detect_cook(model, threshold=None):
         threshold = 4 / model.nobs
     return np.where(cooks_d > threshold)[0]
 
-# Détecter les résidus studentisés > seuil
+# detects large residuals
 def detect_large_residuals(model, threshold=3):
     influence = model.get_influence()
     student_resid = influence.resid_studentized_external
     return np.where(np.abs(student_resid) > threshold)[0]
 
-# Détecter les outliers dans les données (z-score > seuil)
+# detects outliers according to zscore=3
 def detect_outliers_data(dataset, threshold=3):
     numeric_data = dataset.select_dtypes(include=[np.number])
     z_scores = zscore(numeric_data, nan_policy='omit')
     outlier_rows = np.where(np.abs(z_scores) > threshold)
     return np.unique(outlier_rows[0])
 
-# Nettoyage global : combine toutes les détections d'outliers
+# removes large residuals, outliers and high influence point according to Cook's distance
 def clean_model(model, dataset):
     idx_cook = detect_cook(model)
     idx_resid = detect_large_residuals(model)
@@ -173,25 +173,22 @@ if __name__ == "__main__":
         "Positive", "Negative"
     ]]
     gamesc = clean_column_names(gamesc)
-    # print(games.head())
     Y = "average_playtime_forever"
     X = ["peak_ccu", "positive", "negative", "recommendations", "price", "required_age"]
     categories = ["estimated_owners"]
-    # print(gamesc.columns)
-    # variables = [Y] + X + categories  # Liste combinée des variables
 
     model = create_lm(gamesc, Y, X, categories)
     print(model.summary())
-    # check_lm_hypotheses(model, gamesc)
+    check_lm_hypotheses(model, gamesc)
 
     variables_to_transform = ["peak_ccu", "positive", "negative", "recommendations", "price"]
     gamesc_log = apply_transformations(gamesc, variables_to_transform, "log")
     model_log = create_lm(gamesc_log, Y, X, categories)
     print(model_log.summary())
-    # check_lm_hypotheses(model_log, gamesc_log)
+    check_lm_hypotheses(model_log, gamesc_log)
 
     cleaned_result = clean_model(model, gamesc_log)
     gamesc_log_clean = cleaned_result['data']
     model_log_clean = create_lm(gamesc_log_clean, Y, X, categories)
     print(model_log_clean.summary())
-    # check_lm_hypotheses(model_log_clean, gamesc_log_clean)
+    check_lm_hypotheses(model_log_clean, gamesc_log_clean)
