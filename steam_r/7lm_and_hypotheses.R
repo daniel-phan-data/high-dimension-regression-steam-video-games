@@ -54,7 +54,7 @@ check_lm_hypotheses <- function(model, data) {
   # si proche de 0 : autocorrelation positive. si > 2.5 : autocorrelation negative   
   cat("\nTest de Durbin-Watson (attendu ≈ 2) :\n")
   print(dwtest(model))
-  dwtest(modele.RLM, alternative = c("two.sided"))
+  dwtest(model, alternative = c("two.sided"))
   # ACF : si les barres depassent, il y a autocorrelation des erreurs
   acf(residuals(model), main = "5. ACF des résidus")
   
