@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 
 # ANALYSE PRÉDICTIVE DES JEUX STEAM - PARCOURS COMPLET
 
@@ -206,7 +206,7 @@ vif_results <- car::vif(mod_vif)
 #        "  - Exactitude globale : ", round(conf_matrix$overall["Accuracy"], 2), "%\n",
 #        "  - Variables significatives : Peak.CCU (p < 0.001), Price (p = 0.02)")
 
-=======
+
 ## IMPORTS ----
 rm(list = ls())
 graphics.off()
@@ -417,4 +417,4 @@ check_lm_hypotheses(model_ubisoft, ubisoft)
 ## classification to predict estimated owners ----
 
 ## polynomial models ----
->>>>>>> 5219f6c5c12ac237a1a7d562c44c607edf789b7c
+
