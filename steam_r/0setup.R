@@ -20,7 +20,7 @@
 packages <- c(
   "tidyverse", "DataExplorer", "dplyr", "ggplot2",
   "leaps", "glmulti", "nlme", "nnet", "pscl", "car",
-  "rlang", "corrplot", "ggcorrplot"
+  "rlang", "corrplot", "ggcorrplot", "lmtest"
 )
 
 

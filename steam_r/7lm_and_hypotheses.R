@@ -15,6 +15,8 @@ gamesc <- games %>%
          Positive, Negative,
          total_reviews, positive_ratio)
 
+
+
 # Function to create a linear model
 create_lm <- function(dataset, Y, X, categories) {
     if (length(categories) == 0) {
@@ -31,8 +33,7 @@ check_lm_hypotheses <- function(model, data) {
   cat("Vérification des hypothèses pour le modèle :", deparse(model$call), "\n\n")
   
   # hypothese 1: relation de linearite entre Y et X
-  # le nuage de points doit etre centre autour de 0 sans motif evident
-  # sinon la relation n est pas bien modelise, non-linearite possible
+  # en cas de linerite le nuage de points doit etre centre autour de 0 sans motif evident
   plot(model, which = 1, main = "1. Résidus vs valeurs ajustées")
   
   # hypothese 2: homoscedasticite des erreurs

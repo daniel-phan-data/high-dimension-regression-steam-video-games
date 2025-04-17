@@ -1,6 +1,6 @@
 # this script will generate all the graphs and data in our annex
-# starting from the first linear model
-# refer to files 1, 2, 3, 5, and 6 for the rest
+# starting from our first linear model attempt
+# refer to files 1, 2, 3, 5, and 6 for the rest of the annex
 
 ## IMPORTS ----
 rm(list = ls()) #clean environment
@@ -98,7 +98,7 @@ check_lm_hypotheses <- function(model, data) {
     # cat("\nObservations influentes (Cook > 4/n) :\n")
     # influents <- which(cooks > seuil)
     # print(influents)
-    
+
     plot(cooks, type = "h",
          main = "6. Distance de Cook avec seuil 4/n",
          ylab = "Distance de Cook", xlab = "Index de l'observation")
@@ -303,33 +303,22 @@ ubisoft_bic_both <- run_stepwise(ubisoft, direction = "both", crit = "bic")
 ubisoft_F_both <- run_stepwise(ubisoft, direction = "both", crit = "F")
 
 ## comparison
-models_to_compare <- list(ubisoft_aic_for, ubisoft_bic_for, ubisoft_F_for,
+models_to_compare <- list(ubisoft_aic, ubisoft_bic,
+                          ubisoft_aic_for, ubisoft_bic_for, ubisoft_F_for,
                           ubisoft_aic_both, ubisoft_bic_both, ubisoft_F_both)
-names_to_use <- c("AIC forward", "BIC forward", "Fischer forward",
+names_to_use <- c("AIC", "BIC",
+                  "AIC forward", "BIC forward", "Fischer forward",
                   "AIC both", "BIC both", "Fischer both")
-# backward direction gives trivial model, so we are not comparing them
+# backward direction returns trivial model, so we are not comparing them
 compare_models(models_to_compare, names_to_use)
 
-## classification to predict estimated owners ----
+## show variables used in each model
+for (i in seq_along(models_to_compare)) {
+    cat("\n---", names_to_use[i], "---\n")
+    print(attr(terms(models_to_compare[[i]]), "term.labels"))
+}
 
-# renaming and factoring Estimated.owners
-gamesc$Estimated.owners <- as.factor(gamesc$Estimated.owners)
-gamesc$Estimated.owners <- 
-    fct_recode(gamesc$Estimated.owners,
-               "0-20k" = "0 - 20000",
-               "20k-50k" = "20000 - 50000",
-               "50k-100k" = "50000 - 100000",
-               "100k-200k" = "100000 - 200000",
-               "200k-500k" = "200000 - 500000",
-               "500k-1M" = "500000 - 1000000",
-               "1M-2M" = "1000000 - 2000000",
-               "2M-5M" = "2000000 - 5000000",
-               "5M-10M" = "5000000 - 10000000",
-               "10M-20M" = "10000000 - 20000000",
-               "20M-50M" = "20000000 - 50000000",
-               "50M-100M" = "50000000 - 100000000",
-               "100M-200M" = "100000000 - 200000000"
-    )
+## classification to predict estimated owners ----
 
 # setting class reference to 0-20k
 gamesc$Estimated.owners <- relevel(gamesc$Estimated.owners, ref = "0-20k")
