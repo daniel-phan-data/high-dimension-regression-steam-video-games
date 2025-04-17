@@ -2,16 +2,21 @@
 #### rating function was added to 0setup instead
 
 ## IMPORTS ----
-rm(list = ls())
-graphics.off()
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-temp_env <- new.env()
+rm(list = ls()) #clean environment
+graphics.off() #clean plots
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #set working directory
+temp_env <- new.env() #temporary environment to avoid uneccessary variables after import
 source("0setup.R", local = temp_env)
 games <- temp_env$setup()
-rm(temp_env)
-gamesc <- games %>% select(Average.playtime.forever, Estimated.owners,
-                           Peak.CCU,Price, Recommendations,
-                           Required.age, Positive, Negative)
+rm(temp_env) #delete temporary environment after data has been loaded
+
+#select variables for analysis
+gamesc <- games %>%
+  select(Average.playtime.forever, Estimated.owners,
+         Peak.CCU, rating, Price,
+         Recommendations, Required.age,
+         Positive, Negative,
+         total_reviews, positive_ratio)
 
 ##create rating variable ----
 create_rating <- function(Positive, Negative) {

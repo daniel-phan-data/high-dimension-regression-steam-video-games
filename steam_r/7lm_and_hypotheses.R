@@ -1,11 +1,13 @@
 ## IMPORTS ----
-rm(list = ls())
-graphics.off()
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-temp_env <- new.env()
+rm(list = ls()) #clean environment
+graphics.off() #clean plots
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #set working directory
+temp_env <- new.env() #temporary environment to avoid uneccessary variables after import
 source("0setup.R", local = temp_env)
 games <- temp_env$setup()
-rm(temp_env)
+rm(temp_env) #delete temporary environment after data has been loaded
+
+#select variables for analysis
 gamesc <- games %>%
   select(Average.playtime.forever, Estimated.owners,
          Peak.CCU, rating, Price,
@@ -88,7 +90,7 @@ check_lm_hypotheses <- function(model, data) {
   # attention aux points au dessus de la ligne rouge
   cooks <- cooks.distance(model)
   seuil <- 4 / nrow(data)
-  cat("\nObservations influentes (Cook > 4/n) :\n")
+  # cat("\nObservations influentes (Cook > 4/n) :\n")
   # influents <- which(cooks > seuil)
   # print(influents)
   
@@ -193,15 +195,12 @@ variables_to_transform <- c("Average.playtime.forever","Peak.CCU",
 #tranformation with log
 gamesc_log <- apply_transformations(gamesc, variables_to_transform)
 model_log <- create_lm(gamesc_log, Y, X, categories)
-
 summary(model_log)
-
 
 ## third model without outliers, high influence point, and extreme errors ----
 cleaning <- clean_model(model_log, gamesc_log)
 gamesc_log_clean <- cleaning$data
 model_log_clean <- create_lm(gamesc_log_clean, Y, X, categories)
-
 summary(model_log_clean)
 cat("Nombre de points retirés :", length(cleaning$removed), "\n")
 

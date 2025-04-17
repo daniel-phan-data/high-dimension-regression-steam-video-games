@@ -1,29 +1,26 @@
 ## copy and paste IMPORTS at the beginning of your scripts ----
 # ## IMPORTS ----
-# rm(list = ls())
-# graphics.off()
-# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-# temp_env <- new.env()
+# rm(list = ls()) #clean environment
+# graphics.off() #clean plots
+# setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #set working directory
+# temp_env <- new.env() #temporary environment to avoid uneccessary variables after import
 # source("0setup.R", local = temp_env)
 # games <- temp_env$setup()
-# rm(temp_env)
+# rm(temp_env) #delete temporary environment after data has been loaded
+# 
+# #select variables for analysis
 # gamesc <- games %>%
-#   select(Name, Publishers, Average.playtime.forever, Estimated.owners,
+#   select(Average.playtime.forever, Estimated.owners,
 #          Peak.CCU, rating, Price,
 #          Recommendations, Required.age,
 #          Positive, Negative,
 #          total_reviews, positive_ratio)
 
-
 ## list of packages needed ----
-
 packages <- c(
-  "tidyverse", "DataExplorer", "dplyr", "here", "ggplot2", 
-  "nortest", "ggcorrplot", "corrplot", "ISLR", "lmtest", 
-  "leaps", "glmulti", "forcats", "nlme", "car", "gglasso",
-  "glmnet", "boot", "rpart", "rpart.plot", "randomForest",
-  "nnet", "forcats", "rsq", "pscl", "stringr", "forcats",
-  "readr"
+  "tidyverse", "DataExplorer", "dplyr", "ggplot2",
+  "leaps", "glmulti", "nlme", "nnet", "pscl", "car",
+  "rlang", "corrplot", "ggcorrplot"
 )
 
 
@@ -34,8 +31,8 @@ setup <- function() {
   # set working dir to script's location
   setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
   install_and_load(packages)
-  gamesc <- load_and_clean_games()
-  return(gamesc)
+  games <- load_and_clean_games()
+  return(games)
 }
 
 install_and_load <- function(packages) {
@@ -54,33 +51,33 @@ install_and_load <- function(packages) {
 load_and_clean_games <- function() {
   filepath <- "../steam_data/games.csv"
   games <- read.csv(filepath)
-  gamesc <- games %>% filter(Average.playtime.forever>0 & Peak.CCU>0)
-  gamesc[is.na(gamesc)] <- 0
-  total_reviews <- gamesc$Positive + gamesc$Negative
-  positive_ratio <- (gamesc$Positive / total_reviews) * 100  # ratio of positive reviews
+  games <- games %>% filter(Average.playtime.forever>0 & Peak.CCU>0)
+  games[is.na(games)] <- 0
+  total_reviews <- games$Positive + games$Negative
+  positive_ratio <- (games$Positive / total_reviews) * 100  # ratio of positive reviews
   
   # create variable total_reviews
-  gamesc <- gamesc %>% mutate(total_reviews = mapply(create_total_reviews, Positive, Negative))
+  games <- games %>% mutate(total_reviews = mapply(create_total_reviews, Positive, Negative))
   
   # create variable positive_ratio
-  gamesc <- gamesc %>% mutate(positive_ratio = mapply(create_positive_ratio, Positive, Negative))
+  games <- games %>% mutate(positive_ratio = mapply(create_positive_ratio, Positive, Negative))
   
   # create variable rating
-  gamesc <- gamesc %>% mutate(rating = mapply(create_rating, Positive, Negative))
+  games <- games %>% mutate(rating = mapply(create_rating, Positive, Negative))
   # define rating category order
   rating_levels <- c("Overwhelmingly Positive", "Very Positive", "Positive", 
                      "Mostly Positive", "Mixed", 
                      "Mostly Negative", "Negative", "Very Negative", 
                      "Overwhelmingly Negative", "Not enough reviews")
   # rating as factor
-  gamesc <- gamesc %>%
+  games <- games %>%
     mutate(rating = factor(rating, levels = rating_levels, ordered = TRUE))
-  gamesc <- na.omit(gamesc)
+  games <- na.omit(games)
   
   #estimated owner as factor
-  gamesc$Estimated.owners <- as.factor(gamesc$Estimated.owners)
-  gamesc$Estimated.owners <- 
-    fct_recode(gamesc$Estimated.owners,
+  games$Estimated.owners <- as.factor(games$Estimated.owners)
+  games$Estimated.owners <- 
+    fct_recode(games$Estimated.owners,
                "0-20k" = "0 - 20000",
                "20k-50k" = "20000 - 50000",
                "50k-100k" = "50000 - 100000",
@@ -95,8 +92,13 @@ load_and_clean_games <- function() {
                "50M-100M" = "50000000 - 100000000",
                "100M-200M" = "100000000 - 200000000"
     )
-  
-  return(gamesc)
+  games$Estimated.owners <- fct_relevel(
+    games$Estimated.owners,
+    "0-20k", "20k-50k", "50k-100k", "100k-200k", "200k-500k", 
+    "500k-1M", "1M-2M", "2M-5M", "5M-10M", "10M-20M", 
+    "20M-50M", "50M-100M", "100M-200M"
+  )
+  return(games)
 }
 
 create_rating <- function(Positive, Negative) {
