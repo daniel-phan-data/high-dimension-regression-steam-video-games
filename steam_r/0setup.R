@@ -23,7 +23,7 @@ packages <- c(
   "leaps", "glmulti", "forcats", "nlme", "car", "gglasso",
   "glmnet", "boot", "rpart", "rpart.plot", "randomForest",
   "nnet", "forcats", "rsq", "pscl", "stringr", "forcats",
-  "readr"
+  "readr", "caret", "broom", "performance"
 )
 
 

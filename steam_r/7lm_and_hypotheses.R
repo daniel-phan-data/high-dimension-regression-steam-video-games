@@ -88,7 +88,7 @@ check_lm_hypotheses <- function(model, data) {
   # attention aux points au dessus de la ligne rouge
   cooks <- cooks.distance(model)
   seuil <- 4 / nrow(data)
-  cat("\nObservations influentes (Cook > 4/n) :\n")
+  # cat("\nObservations influentes (Cook > 4/n) :\n")
   # influents <- which(cooks > seuil)
   # print(influents)
   
