@@ -1,16 +1,19 @@
 ## IMPORTS ----
-rm(list = ls())
-graphics.off()
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-temp_env <- new.env()
+rm(list = ls()) #clean environment
+graphics.off() #clean plots
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #set working directory
+temp_env <- new.env() #temporary environment to avoid uneccessary variables after import
 source("0setup.R", local = temp_env)
 games <- temp_env$setup()
-rm(temp_env)
+rm(temp_env) #delete temporary environment after data has been loaded
 
-cleaned_games <- games %>% select(Average.playtime.forever, Estimated.owners, Peak.CCU,
-                           Price, Recommendations, Required.age,
-                           Positive, Negative)
-
+#select variables for analysis
+cleaned_games <- games %>%
+  select(Average.playtime.forever, Estimated.owners,
+         Peak.CCU, rating, Price,
+         Recommendations, Required.age,
+         Positive, Negative,
+         total_reviews, positive_ratio)
 
 names(cleaned_games)
 summary(cleaned_games)
@@ -54,29 +57,11 @@ bar_plot_age <- ggplot(cleaned_games, aes(x = age_Category)) +
 print(bar_plot_age)
 
 # estimated owner
-# sort categories and give them new names
-new_labels <- c("0 - 20000" = "0-20k",
-                "20000 - 50000" = "20k-50k",
-                "50000 - 100000" = "50k-100k",
-                "100000 - 200000" = "100k-200k",
-                "200000 - 500000" = "200k-500k",
-                "500000 - 1000000" = "500k-1M",
-                "1000000 - 2000000" = "1M-2M",
-                "2000000 - 5000000" = "2M-5M",
-                "5000000 - 10000000" = "5M-10M",
-                "10000000 - 20000000" = "10M-20M",
-                "20000000 - 50000000" = "20M-50M",
-                "50000000 - 100000000" = "50M-100M",
-                "100000000 - 200000000" = "100M-200M")
-# Rename factor levels
-cleaned_games$Estimated.owners2 <- factor(cleaned_games$Estimated.owners, 
-                                         levels = names(new_labels),  # Keep correct order
-                                         labels = new_labels)  # Apply new labels
 
 # Print new levels to verify
-print(levels(cleaned_games$Estimated.owners2))
+print(levels(cleaned_games$Estimated.owners))
 # time to plot
-bar_plot_owner <- ggplot(cleaned_games, aes(x = Estimated.owners2)) +
+bar_plot_owner <- ggplot(cleaned_games, aes(x = Estimated.owners)) +
   geom_bar(fill = "steelblue") +
   labs(title = "Distribution of Estimated Owners",
        x = "Estimated Owners",

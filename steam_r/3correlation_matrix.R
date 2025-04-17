@@ -1,15 +1,18 @@
 ## IMPORTS ----
-rm(list = ls())
-graphics.off()
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-temp_env <- new.env()
+rm(list = ls()) #clean environment
+graphics.off() #clean plots
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #set working directory
+temp_env <- new.env() #temporary environment to avoid uneccessary variables after import
 source("0setup.R", local = temp_env)
 games <- temp_env$setup()
-rm(temp_env)
+rm(temp_env) #delete temporary environment after data has been loaded
 
-cleaned_games <- games %>% select(Average.playtime.forever, Estimated.owners,
-                           Peak.CCU,Price, Recommendations,
-                           Required.age, Positive, Negative)
+#select variables for analysis
+cleaned_games <- games %>%
+    select(Average.playtime.forever, Estimated.owners,
+           Peak.CCU, rating, Price,
+           Recommendations, Required.age,
+           Positive, Negative)
 
 ####correlation matrix ####
 
@@ -21,7 +24,6 @@ cor_matrix <- cor(numeric_vars, method = "spearman", use = "pairwise.complete.ob
 print(cor_matrix)
 
 #illustration
-
 
 corrplot(cor_matrix, method = "color", type = "upper", order = "hclust",
          col = colorRampPalette(c("blue", "white", "red"))(200), tl.col = "black")
@@ -36,9 +38,6 @@ ggcorrplot(cor_matrix, method = "square", type = "lower", lab = TRUE)
 #Moderate correlations: Peak.CCU - Recommendations (0.59) / Negative - Recommendations (0.67) / Peak.CCU - Positive (0.66)
 #Weaker correlations: Price - Average.playtime.forever (0.30) / Price - Positive (0.27)
 
-
-
-## dani ----
 # keep numerical variables
 
 numeric_vars <- cleaned_games[, sapply(cleaned_games, is.numeric)]

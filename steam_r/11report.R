@@ -1,3 +1,7 @@
+# this script will generate all the graphs and data in our annex
+# starting from the first linear model
+# refer to files 1, 2, 3, 5, and 6 for the rest
+
 ## IMPORTS ----
 rm(list = ls()) #clean environment
 graphics.off() #clean plots
@@ -15,7 +19,7 @@ gamesc <- games %>%
            Positive, Negative,
            total_reviews, positive_ratio)
 
-## functions to create models and test hypotheeses ----
+## functions to create models and test hypotheses ----
 # function to create a linear model
 create_lm <- function(dataset, Y, X, categories) {
     if (length(categories) == 0) {
@@ -275,7 +279,7 @@ compare_models <- function(model_list, model_names = NULL) {
 
 ## testing algorithms selection on ubisoft games ----
 
-# glmulti
+## glmulti
 
 ubisoft_aic <- select_model_glmulti(ubisoft, crit = "aic")
 ubisoft_aic <- lm(ubisoft_aic, ubisoft)
@@ -283,29 +287,107 @@ ubisoft_aic <- lm(ubisoft_aic, ubisoft)
 ubisoft_bic <- select_model_glmulti(ubisoft, crit = "bic")
 ubisoft_bic <- lm(ubisoft_bic, ubisoft)
 
-# forward selection
+## forward selection
 ubisoft_aic_for <- run_stepwise(ubisoft, direction = "forward", crit = "aic")
 ubisoft_bic_for <- run_stepwise(ubisoft, direction = "forward", crit = "bic")
 ubisoft_F_for <- run_stepwise(ubisoft, direction = "forward", crit = "F")
 
-# backward selection
+## backward selection
 ubisoft_aic_back <- run_stepwise(ubisoft, direction = "backward", crit = "aic")
 ubisoft_bic_back <- run_stepwise(ubisoft, direction = "backward", crit = "bic")
 ubisoft_F_back <- run_stepwise(ubisoft, direction = "backward", crit = "F")
 
-# both directions
+## both directions
 ubisoft_aic_both <- run_stepwise(ubisoft, direction = "both", crit = "aic")
 ubisoft_bic_both <- run_stepwise(ubisoft, direction = "both", crit = "bic")
 ubisoft_F_both <- run_stepwise(ubisoft, direction = "both", crit = "F")
 
-# comparison
+## comparison
 models_to_compare <- list(ubisoft_aic_for, ubisoft_bic_for, ubisoft_F_for,
                           ubisoft_aic_both, ubisoft_bic_both, ubisoft_F_both)
 names_to_use <- c("AIC forward", "BIC forward", "Fischer forward",
                   "AIC both", "BIC both", "Fischer both")
+# backward direction gives trivial model, so we are not comparing them
 compare_models(models_to_compare, names_to_use)
-
 
 ## classification to predict estimated owners ----
 
-## polynomial models ----
+# renaming and factoring Estimated.owners
+gamesc$Estimated.owners <- as.factor(gamesc$Estimated.owners)
+gamesc$Estimated.owners <- 
+    fct_recode(gamesc$Estimated.owners,
+               "0-20k" = "0 - 20000",
+               "20k-50k" = "20000 - 50000",
+               "50k-100k" = "50000 - 100000",
+               "100k-200k" = "100000 - 200000",
+               "200k-500k" = "200000 - 500000",
+               "500k-1M" = "500000 - 1000000",
+               "1M-2M" = "1000000 - 2000000",
+               "2M-5M" = "2000000 - 5000000",
+               "5M-10M" = "5000000 - 10000000",
+               "10M-20M" = "10000000 - 20000000",
+               "20M-50M" = "20000000 - 50000000",
+               "50M-100M" = "50000000 - 100000000",
+               "100M-200M" = "100000000 - 200000000"
+    )
+
+# setting class reference to 0-20k
+gamesc$Estimated.owners <- relevel(gamesc$Estimated.owners, ref = "0-20k")
+
+# log transformation
+gamesc$Average.playtime.forever <- log1p(gamesc$Average.playtime.forever)
+gamesc$Peak.CCU <- log1p(gamesc$Peak.CCU)
+gamesc$Positive <- log1p(gamesc$Positive)
+gamesc$Negative <- log1p(gamesc$Negative)
+gamesc$Recommendations <- log1p(gamesc$Recommendations)
+gamesc$Price <- log1p(gamesc$Price)
+
+# standardisation
+X <- c("Average.playtime.forever", "Peak.CCU", "Positive", "Negative", 
+       "Recommendations", "Price", "Required.age")
+gamesc_scaled <- as.data.frame(scale(gamesc[, X]))
+gamesc_scaled$Estimated.owners <- gamesc$Estimated.owners
+
+# create logit model
+model_logit <- multinom(Estimated.owners ~ ., data = gamesc_scaled)
+
+# testing coefficient significance
+z <- summary(model_logit)$coefficients / summary(model_logit)$standard.errors
+p_values <- 2 * (1 - pnorm(abs(z)))
+cat("\n--- P-values des coefficients ---\n")
+print(round(p_values, 4))
+
+# AIC of model
+cat("\n--- AIC du modèle ---\n")
+print(AIC(model_logit))
+
+# pseudo R²
+cat("\n--- Pseudo R² ---\n")
+print(pR2(model_logit))
+
+# VIF for multicolinearity
+mod_lineaire_temp <- lm(
+    as.numeric(as.factor(Estimated.owners)) ~ Peak.CCU + Positive + Negative + Recommendations + Price + Required.age,
+    data = gamesc_scaled
+)
+cat("\n--- VIF (multicolinéarité) ---\n")
+print(vif(mod_lineaire_temp))
+
+# prediction quality, confusion matrix
+pred <- predict(model_logit)
+cat("\n--- Matrice de confusion ---\n")
+print(table(Predicted = pred, Actual = gamesc_scaled$Estimated.owners))
+
+# accuracy calculation
+accuracy <- mean(pred == gamesc_scaled$Estimated.owners)
+cat("\n--- Taux de bonnes prédictions ---\n")
+print(round(accuracy, 4))
+
+# trivial classification, always predict most common class
+majority_class <- names(which.max(table(gamesc_scaled$Estimated.owners)))
+trivial_pred <- rep(majority_class, nrow(gamesc_scaled))
+
+# accuracy of trivial classification
+trivial_accuracy <- mean(trivial_pred == gamesc_scaled$Estimated.owners)
+cat("\n--- Taux de bonnes prédictions (modèle trivial) ---\n")
+print(round(trivial_accuracy, 4))
