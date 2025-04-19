@@ -3,6 +3,7 @@ set STEAM_GAMES(rename=(
         'Average playtime forever'n = Average_playtime_forever
         'Peak CCU'n = Peak_CCU
         'Required age'n = Required_age
+        'estimated owners'n = estimated_owners
     ));
     keep Average_playtime_forever Peak_CCU 
           Price Recommandations Required_age 
