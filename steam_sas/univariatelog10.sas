@@ -7,7 +7,8 @@ data univariatelog10;
     log_Positive = log10(Positive + 1);
     log_Negative = log10(Negative + 1);
     log_Recommendations = log10(Recommendations + 1);
-    log_Price = log10(Price + 1);
+    log_Price = log10(Price + 1)
+    ;
 run;
 
 
