@@ -10,7 +10,7 @@ data univariatelog10;
     log_Price = log10(Price + 1);
 run;
 
-%macro plot_varslog;
+
     %let i = 1;
     %let var = %scan(&varlist, &i, %str( ));
 
@@ -23,6 +23,5 @@ run;
         %let i = %eval(&i + 1);
         %let var = %scan(&varlist, &i, %str( ));
     %end;
-%mend;
 
-%plot_varslog
+
