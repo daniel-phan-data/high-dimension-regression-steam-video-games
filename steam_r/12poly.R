@@ -66,7 +66,6 @@ apply_transformations <- function(data, variables) {
     for (var in variables) {
         # log transformation: log10(x + 1) to avoid log(0)
         data[[var]] <- log10(data[[var]] + 1)
-        
     }
     return(data)
 }
@@ -78,3 +77,4 @@ gamesc_log <- apply_transformations(gamesc, variables_to_transform)
 
 X <- c("Peak.CCU", "Positive", "Negative", "Recommendations", "Price", "Required.age")
 check_polynomial_models(gamesc, response_var = "Average.playtime.forever", predictors = X)
+

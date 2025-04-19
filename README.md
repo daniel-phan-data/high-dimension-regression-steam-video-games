@@ -1,41 +1,65 @@
 # MODEL_LIN_STEAM
 
+## Description
+This project is a statistical analysis of steam's video games data, scrapped from their API, through the use of linear models, and other regression techniques. You will find here all the code we used, in R.
+
 ## Folder structure
-We coded the same functions and scripts in R, python and SAS.
+Some of the following R scripts were replicated in SAS and Python, hence the python, sas, and r folders.
 The files are as follows :
+
+setup: used to load and clean our data before analysis
+
+univariate_tests: script that displays all the univariate tests we needed for the report
+
+univariate_tests_log: more univariate tests with a log transformation for the variables hard to visualize otherwise
+
+correlation_matrix: script that displays the correlation matrix of the selected relevant variables for our analysis
+
+rating: outdated as it has been merged with setup, creates new variable rating to reflect Steam's evaluations
 
 bivariate_tests: script that displays the bivariate tests used for our analysis
 
-classification : script that creates and test a classification model that predicts estimated owners of a given game
+univ_rating: script to display statistical tests on the rating variable we created
 
-correlation_matrix : script that displays the correlation matrix of the selected relevant variables for our analysis
+lm_and_hypotheses: script that can create linear models and test the essential hypotheses
 
-lm_and_hypotheses: script that creates linear models and test the essential hypotheses
+lm_selection: script that can run linear model selection algorithms
 
-lm_selection : script that can run linear model selection algorithms
+classification: script that can create and test a classification model that predicts estimated owners of a given game
 
-setup : used to load and clean our data before analysis
+report: uses functions from the other scripts to generate the specific models and graphs used in our analysis report
 
-univ_rating : script to display statistical tests on the rating variable we created
-
-univariate_tests : script that displays all the univariate tests we needed for the report
-
-univariate_tests_log : more univariate tests with a log transformation for the variables hard to visualize otherwise
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+poly: script that tests polynomial models for each predictors and check if it fits data better
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### R:
+We recommend Rstudio and the 4.4.1 version of R.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+### Python:
+We recommend Python 3.13 or at least 3.xx
+1. Navigate to the python directory:
+```bash
+cd steam_python
+```
+2. Install or update pip:
+```bash
+python -m pip install --upgrade pip
+```
+3. Install the required dependencies using pip:
+```bash
+pip install -r requirements.txt
+```
+4. Execute the following command to run the desired script:
+```bash
+python ./[filename.py]
+```
 
 ## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+PHAN Daniel
+MOUILLET Antonin
+OUSALEM Nathan
+NDAYIZYE Perle M.S
+GODJE Ibrahim
 
 ## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Finished.
