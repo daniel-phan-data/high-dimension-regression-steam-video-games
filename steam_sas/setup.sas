@@ -7,7 +7,7 @@ set STEAM_GAMES(rename=(
     ));
     keep Average_playtime_forever Peak_CCU 
           Price Recommandations Required_age 
-         Positive Negative total_reviews Positive_Ratio ;
+         Positive Negative total_reviews Positive_Ratio rating_levels ;
 
 
 Total_Reviews = Positive + Negative;
@@ -26,31 +26,31 @@ if total_reviews > 0 then
     else 
         positive_ratio = .;
 
-    length review_label $30;
+    length rating_levels $30;
 
     if total_reviews >= 500 then do;
-        if 95 <= positive_ratio <= 100 then review_label = "Overwhelmingly Positive";
-        else if 80 <= positive_ratio < 95 then review_label = "Very Positive";
-        else if 70 <= positive_ratio < 80 then review_label = "Mostly Positive";
-        else if 40 <= positive_ratio < 70 then review_label = "Mixed";
-        else if 20 <= positive_ratio < 40 then review_label = "Mostly Negative";
-        else if 0 <= positive_ratio < 20 then review_label = "Overwhelmingly Negative";
+        if 95 <= positive_ratio <= 100 then rating_levels = "Overwhelmingly Positive";
+        else if 80 <= positive_ratio < 95 then rating_levels = "Very Positive";
+        else if 70 <= positive_ratio < 80 then rating_levels = "Mostly Positive";
+        else if 40 <= positive_ratio < 70 then rating_levels = "Mixed";
+        else if 20 <= positive_ratio < 40 then rating_levels = "Mostly Negative";
+        else if 0 <= positive_ratio < 20 then rating_levels = "Overwhelmingly Negative";
     end;
     else if 50 <= total_reviews < 500 then do;
-        if 80 <= positive_ratio <= 100 then review_label = "Very Positive";
-        else if 70 <= positive_ratio < 80 then review_label = "Mostly Positive";
-        else if 40 <= positive_ratio < 70 then review_label = "Mixed";
-        else if 20 <= positive_ratio < 40 then review_label = "Mostly Negative";
-        else if 0 <= positive_ratio < 20 then review_label = "Very Negative";
+        if 80 <= positive_ratio <= 100 then rating_levels = "Very Positive";
+        else if 70 <= positive_ratio < 80 then rating_levels = "Mostly Positive";
+        else if 40 <= positive_ratio < 70 then rating_levels = "Mixed";
+        else if 20 <= positive_ratio < 40 then rating_levels = "Mostly Negative";
+        else if 0 <= positive_ratio < 20 then rating_levels = "Very Negative";
     end;
     else if 10 <= total_reviews < 50 then do;
-        if 80 <= positive_ratio <= 100 then review_label = "Positive";
-        else if 70 <= positive_ratio < 80 then review_label = "Mostly Positive";
-        else if 40 <= positive_ratio < 70 then review_label = "Mixed";
-        else if 20 <= positive_ratio < 40 then review_label = "Mostly Negative";
-        else if 0 <= positive_ratio < 20 then review_label = "Negative";
+        if 80 <= positive_ratio <= 100 then rating_levels = "Positive";
+        else if 70 <= positive_ratio < 80 then rating_levels = "Mostly Positive";
+        else if 40 <= positive_ratio < 70 then rating_levels = "Mixed";
+        else if 20 <= positive_ratio < 40 then rating_levels = "Mostly Negative";
+        else if 0 <= positive_ratio < 20 then rating_levels = "Negative";
     end;
-    else review_label = "Not enough reviews";
+    else rating_levels = "Not enough reviews";
 run;
 
 data games ;
