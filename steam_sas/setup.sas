@@ -51,3 +51,22 @@ if total_reviews > 0 then
     end;
     else review_label = "Not enough reviews";
 run;
+
+data games ;
+set games; 
+    length estimated_owners $20;
+
+    if Estimated_owners = "0 - 20000" then estimated_owners = "0-20k";
+    else if Estimated_owners = "20000 - 50000" then estimated_owners = "20k-50k";
+    else if Estimated_owners = "50000 - 100000" then estimated_owners = "50k-100k";
+    else if Estimated_owners = "100000 - 200000" then estimated_owners = "100k-200k";
+    else if Estimated_owners = "200000 - 500000" then estimated_owners = "200k-500k";
+    else if Estimated_owners = "500000 - 1000000" then estimated_owners = "500k-1M";
+    else if Estimated_owners = "1000000 - 2000000" then estimated_owners = "1M-2M";
+    else if Estimated_owners = "2000000 - 5000000" then estimated_owners = "2M-5M";
+    else if Estimated_owners = "5000000 - 10000000" then estimated_owners = "5M-10M";
+    else if Estimated_owners = "10000000 - 20000000" then estimated_owners = "10M-20M";
+    else if Estimated_owners = "20000000 - 50000000" then estimated_owners = "20M-50M";
+    else if Estimated_owners = "50000000 - 100000000" then estimated_owners = "50M-100M";
+    else if Estimated_owners = "100000000 - 200000000" then estimated_owners = "100M-200M";
+run;
