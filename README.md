@@ -32,10 +32,10 @@ report: uses functions from the other scripts to generate the specific models an
 poly: script that tests polynomial models for each predictors and check if it fits data better
 
 ## Installation
-### R:
-We recommend Rstudio and the 4.4.1 version of R.
+- R:
+We recommend the IDE Rstudio and the 4.4.1 version of R.
 
-### Python:
+- Python:
 We recommend Python 3.13 or at least 3.xx
 1. Navigate to the python directory:
 ```bash
@@ -51,15 +51,15 @@ pip install -r requirements.txt
 ```
 4. Execute the following command to run the desired script:
 ```bash
-python ./[filename.py]
+python ./filename.py
 ```
 
 ## Authors and acknowledgment
-PHAN Daniel
-MOUILLET Antonin
-OUSALEM Nathan
-NDAYIZYE Perle M.S
-GODJE Ibrahim
+- Daniel PHAN
+- Antonin MOUILLET
+- Nathan OUSALEM
+- Perle M.S NDAYIZYE
+- Ibrahim GODJE
 
 ## Project status
 Finished.
