@@ -41,7 +41,7 @@ if total_reviews > 0 then
         else if 40 <= positive_ratio < 70 then review_label = "Mixed";
         else if 20 <= positive_ratio < 40 then review_label = "Mostly Negative";
         else if 0 <= positive_ratio < 20 then review_label = "Very Negative";
-    end;a
+    end;
     else if 10 <= total_reviews < 50 then do;
         if 80 <= positive_ratio <= 100 then review_label = "Positive";
         else if 70 <= positive_ratio < 80 then review_label = "Mostly Positive";
