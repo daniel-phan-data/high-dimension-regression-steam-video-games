@@ -100,6 +100,5 @@ def run_analysis(filepath, X_vars):
 if __name__ == "__main__":
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     filepath = "../steam_data/games.csv"
-    # 👉 Modifie ici les variables explicatives à tester :
     variables = ['positive', 'peak_ccu']
     run_analysis(filepath, variables)
