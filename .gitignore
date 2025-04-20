@@ -11,8 +11,10 @@ glmulti*
 *.toml
 uv.lock
 steam_r/graph/
-steam_r/td_reg
+steam_r/td_reg/
+steam_r/10rapport.R
 steam_python/run_all.py
+
 
 # Ignore R Markdown cache and output files
 *.Rproj
