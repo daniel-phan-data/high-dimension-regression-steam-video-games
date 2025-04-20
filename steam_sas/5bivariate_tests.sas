@@ -6,7 +6,7 @@ run;
 #Test de Kruskal-Wallis (quantitative vs catégorielle)
 proc npar1way data=games wilcoxon edf;
     class estimated_owners rating_levels;          /* variable catégorielle */
-    var _numeric;            /* variable quantitative */
+    var _numeric_;            /* variable quantitative */
 run;
 
 #Test de normalité
