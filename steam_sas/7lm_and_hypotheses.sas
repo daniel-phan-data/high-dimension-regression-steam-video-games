@@ -1,4 +1,4 @@
-#Résidus vs valeurs ajustées, normalité, homoscédasticité, influence
+/*Résidus vs valeurs ajustées, normalité, homoscédasticité, influence */
 proc reg data=games;
     model Y = average_playtime_forever estimated_owners peak_ccu price recommendations required_age positive negative / 
         vif 
@@ -14,19 +14,19 @@ proc reg data=games;
         p=valeurs_ajustees;
 run;
 
-#QQ-plot (normalité des résidus)
+/*QQ-plot (normalité des résidus)*/
 proc univariate data=reg_out normal;
     var residus;
     qqplot residus / normal(mu=est sigma=est);
 run;
 
-#Homoscédasticité : résidus vs ajustés
+/*Homoscédasticité : résidus vs ajustés*/
 proc sgplot data=reg_out;
     scatter x=valeurs_ajustees y=residus;
     refline 0 / axis=y lineattrs=(pattern=shortdash);
 run;
 
-#Studentized residuals, leverage, Cook’s distance
+/*Studentized residuals, leverage, Cook’s distance*/
 proc sgplot data=reg_out;
     scatter x=lev y=student_res;
 run;

@@ -6,7 +6,7 @@ set STEAM_GAMES(rename=(
         'Estimated owners'n = estimated_owners
     ));
     keep Average_playtime_forever Peak_CCU 
-          Price Recommandations Required_age 
+          Price Recommendations Required_age 
          Positive Negative total_reviews Positive_Ratio rating_levels ;
 
 

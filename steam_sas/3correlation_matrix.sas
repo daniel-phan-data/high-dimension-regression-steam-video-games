@@ -1,17 +1,24 @@
+/* Enable graphics for better visualization */
 ods graphics on;
 
-proc corr data=cleaned_games spearman plots=matrix(histogram);
+/* Step 1: Compute Spearman correlation matrix */
+proc corr data=GAMES spearman nosimple noprint outp=corr_out;
     var _numeric_;
 run;
 
-
-
-proc corr data=cleaned_games spearman nosimple outp=corr_out;
-    var _numeric_;
+/* Step 2: Reshape the correlation matrix to long format */
+proc transpose data=corr_out(where=(_TYPE_="CORR")) out=corr_long name=ColumnVar;
+    by _NAME_;
 run;
 
-proc sgplot data=corr_out;
-    heatmapparm x=variable y=_name_ color=r;
+/* Step 3: Create a heatmap of the correlations */
+proc sgplot data=corr_long noautolegend;
+    heatmapparm x=ColumnVar y=_NAME_ color=COL1 /
+        colormodel=(blue white red)
+        outline;
+    xaxis discreteorder=data display=(nolabel);
+    yaxis discreteorder=data display=(nolabel);
+    title "Spearman Correlation Matrix (Numeric Variables)";
 run;
 
-ods graphics off 
+ods graphics off;
