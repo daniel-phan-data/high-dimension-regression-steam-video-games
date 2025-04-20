@@ -1,6 +1,6 @@
 #Résidus vs valeurs ajustées, normalité, homoscédasticité, influence
 proc reg data=games;
-    model Y = X1 X2 X3 / 
+    model Y = average_playtime_forever estimated_owners peak_ccu price recommendations required_age positive negative / 
         vif 
         r 
         influence 
