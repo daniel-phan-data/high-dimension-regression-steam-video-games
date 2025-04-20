@@ -1,5 +1,5 @@
 ####  outdated file
-#### rating function was added to 0setup instead
+#### below functions were added to 0setup instead
 
 ## IMPORTS ----
 rm(list = ls()) #clean environment

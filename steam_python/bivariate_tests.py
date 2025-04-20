@@ -5,32 +5,32 @@ from scipy.stats import shapiro, spearmanr, kruskal
 import warnings
 from setup import load_and_clean_games
 
-# Set working directory
+# set working directory
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 def print_bivariate_tests(cleaned_games):
-    warnings.filterwarnings("ignore")  # Supprimer les warnings pour les tests de corr
+    warnings.filterwarnings("ignore")  # ignore warning for corr tests
 
-    # Colonnes quantitatives à tester
+    # quantitative variables
     numeric_cols = cleaned_games[[
         "Average playtime forever", "Peak CCU", "Price", "Recommendations",
         "Required age", "Positive", "Negative", "total_reviews", "positive_ratio"
     ]].copy()
 
-    # Appliquer log10(x+1) pour éviter log(0)
+    # log10(x+1) to avoid infinite values
     numeric_cols_log = np.log10(numeric_cols + 1)
 
-    # --- Normality tests (Shapiro-Wilk) ---
+    # normality test with lilie
     lillie_table = pd.DataFrame({
-        "p-value Shapiro-Wilk": [
+        "p-value lillie": [
             shapiro(numeric_cols_log[col].dropna())[1]
             for col in numeric_cols_log.columns
         ]
     }, index=numeric_cols_log.columns)
-    print("Shapiro-Wilk Test (log10 transformed variables):")
+    print("lillie test (log10 transformed variables):")
     print(lillie_table)
 
-    # --- Spearman correlation with Average.playtime.forever ---
+    # spearman correlation with average.playtime.forever
     spearman_results = {}
     rho_values = {}
 
@@ -47,7 +47,7 @@ def print_bivariate_tests(cleaned_games):
     print("\nSpearman Correlations with Average playtime forever:")
     print(spearman_table)
 
-    # --- Kruskal-Wallis tests (variables qualitatives) ---
+    # kruskal-wallis tests for qualitative variables
     quali_cols = ["Estimated owners", "rating"]
     kruskal_results = []
 

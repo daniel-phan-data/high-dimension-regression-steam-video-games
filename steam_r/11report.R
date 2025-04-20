@@ -41,7 +41,7 @@ check_lm_hypotheses <- function(model, data) {
     plot(model, which = 1, main = "1. Résidus vs valeurs ajustées")
     
     # hypothese 2: homoscedasticite des erreurs
-    # ecart type constant peu importe la valeur ajustee
+    # on veut un ecart type constant peu importe la valeur ajustee
     # entonnoir = heteroscedasticite
     plot(model, which = 3, main = "2.1. Écarts à l'effet de levier")
     
@@ -92,7 +92,7 @@ check_lm_hypotheses <- function(model, data) {
     
     # observations influentes: distances de Cook
     # indique si certaines observations influencent beaucoup le modele
-    # attention aux points au dessus de la ligne rouge
+    # attention aux lignes au dessus de la ligne rouge
     cooks <- cooks.distance(model)
     seuil <- 4 / nrow(data)
     # cat("\nObservations influentes (Cook > 4/n) :\n")
@@ -227,6 +227,7 @@ run_stepwise <- function(data, direction = "forward", crit = "aic") {
     return(result)
 }
 
+# turn qualitative variables to numerical data, using indicator function
 turn_data_to_num <- function(data) {
     y <- data[["Average.playtime.forever"]]
     XX <- model.matrix(~ ., data = data %>% select(-Average.playtime.forever))[, -1]
@@ -235,6 +236,7 @@ turn_data_to_num <- function(data) {
     return(data_num)
 }
 
+# compare models by displaying key values in a table
 compare_models <- function(model_list, model_names = NULL) {
     if (is.null(model_names)) {
         model_names <- paste0("Model_", seq_along(model_list))

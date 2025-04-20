@@ -8,7 +8,7 @@ from scipy.stats import norm
 
 from setup import load_and_clean_games, clean_column_names
 
-
+# load and clean the dataset, select variables, encode target variable
 def preprocess_data(filepath):
     games = load_and_clean_games(filepath)
     gamesc = games[[
@@ -18,7 +18,7 @@ def preprocess_data(filepath):
     ]]
     gamesc = clean_column_names(gamesc).dropna()
 
-    # Recode 'Estimated owners'
+    # rename estimated owners to more readable labels
     categories = {
         "0 - 20000": "0-20k", "20000 - 50000": "20k-50k", "50000 - 100000": "50k-100k",
         "100000 - 200000": "100k-200k", "200000 - 500000": "200k-500k", "500000 - 1000000": "500k-1M",
@@ -33,12 +33,13 @@ def preprocess_data(filepath):
     return gamesc
 
 
+# transform and scale the selected features, return both logged and standardized versions
 def prepare_features(gamesc, X):
     X_data = gamesc[X]
     X_data_log = np.log1p(X_data).clip(lower=0, upper=100)
     X_data_log = sm.add_constant(X_data_log)
 
-    # Standardize
+    # standardize
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X_data_log.drop(columns='const'))
     X_data_scaled = np.column_stack([np.ones(X_scaled.shape[0]), X_scaled])
@@ -49,17 +50,17 @@ def fit_multinomial_logit(Y, X_scaled):
     model = sm.MNLogit(Y, X_scaled)
     return model.fit()
 
-
+# display model coefficients, p-values, AIC, and pseudo R2
 def print_model_summary(model_fit):
     print(model_fit.summary())
 
-    # P-values
+    # p-values
     z = model_fit.params / model_fit.bse
     p_values = 2 * (1 - norm.cdf(np.abs(z)))
     print("\n--- P-values of coefficients ---")
     print(np.round(p_values, 4))
 
-    # AIC and Pseudo R²
+    # AIC and pseudo R2
     print("\n--- AIC ---")
     print(model_fit.aic)
     print("\n--- Pseudo R² ---")
@@ -75,7 +76,7 @@ def compute_vif(X_data_log, X_vars):
     print("\n--- VIF (multicollinearity) ---")
     print(vif_data)
 
-
+# confusion matrix and accuracy
 def evaluate_model(model_fit, X_scaled, Y_true):
     pred = model_fit.predict(X_scaled)
     pred_class = np.argmax(pred, axis=1)
@@ -88,7 +89,7 @@ def evaluate_model(model_fit, X_scaled, Y_true):
     print(np.round(accuracy, 4))
 
 
-def run_analysis(filepath, X_vars):
+def run_classification(filepath, X_vars):
     gamesc = preprocess_data(filepath)
     X_data_log, X_scaled = prepare_features(gamesc, X_vars)
     model_fit = fit_multinomial_logit(gamesc['estimated_owners'], X_scaled)
@@ -101,4 +102,4 @@ if __name__ == "__main__":
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     filepath = "../steam_data/games.csv"
     variables = ['positive', 'peak_ccu']
-    run_analysis(filepath, variables)
+    run_classification(filepath, variables)

@@ -8,9 +8,10 @@ from sklearn.compose import ColumnTransformer
 
 from setup import load_and_clean_games, clean_column_names
 
-# Set working directory
+# set working directory to script location
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+# performs exhaustive model selection based on aic or bic, testing all combinations up to a given level
 def select_model_glmulti(data, target_col='average_playtime_forever', criterion='aic', level=1):
     X = data.drop(columns=[target_col])
     y = data[target_col]
@@ -29,9 +30,10 @@ def select_model_glmulti(data, target_col='average_playtime_forever', criterion=
                 best_model = model
                 best_formula = combo
 
-    print(f"Best formula: {best_formula}, score ({criterion}): {best_score:.2f}")
+    print(f"best formula: {best_formula}, score ({criterion}): {best_score:.2f}")
     return best_model
 
+# performs stepwise selection (forward, backward, or both) based on aic or bic
 def run_stepwise(data, target_col='average_playtime_forever', direction='forward', criterion='aic'):
     def compute_score(model):
         return model.aic if criterion == 'aic' else model.bic
@@ -77,18 +79,18 @@ def run_stepwise(data, target_col='average_playtime_forever', direction='forward
             changed = True
 
     final_model = sm.OLS(y, sm.add_constant(data[included])).fit()
-    print(f"Final variables: {included}")
+    print(f"final variables: {included}")
     return final_model
 
+# transforms a dataset with categorical variables using one-hot encoding
 def turn_data_to_num(data, target_col='average_playtime_forever'):
-    # Séparer variables numériques et catégorielles
+    # separate numerical and categorical variables
     X = data.drop(columns=[target_col])
     y = data[target_col]
 
     categorical_cols = X.select_dtypes(include=['object', 'category']).columns.tolist()
-    # numeric_cols = X.select_dtypes(include=[np.number]).columns.tolist()
 
-    # Pipeline pour one-hot encoding
+    # pipeline for one-hot encoding
     transformer = ColumnTransformer(transformers=[
         ('cat', OneHotEncoder(drop='first', sparse_output=False), categorical_cols)
     ], remainder='passthrough')
@@ -103,20 +105,20 @@ def turn_data_to_num(data, target_col='average_playtime_forever'):
 if __name__ == "__main__":
     filepath = "../steam_data/games.csv"
     games = load_and_clean_games(filepath)
-    # print(games.head())
     gamesc = games[[
         "Average playtime forever", "Estimated owners",
         "Peak CCU", "Price", "Recommendations", "Required age",
         "Positive", "Negative"
     ]]
     gamesc = clean_column_names(gamesc)
-    # Transformation éventuelle si tu as des variables catégorielles
+
+    # turn categorical variables to numerical variables with indicator function
     gamesc_num = turn_data_to_num(gamesc, target_col='average_playtime_forever')
 
-    print("\n--- Sélection via glmulti (niveau 1) ---")
+    print("\n--- selection via glmulti (level 1) ---")
     glmulti_model = select_model_glmulti(gamesc_num, criterion='aic', level=1)
     print(glmulti_model.summary())
 
-    print("\n--- Sélection par stepwise (forward + AIC) ---")
+    print("\n--- stepwise selection (forward + aic) ---")
     stepwise_model = run_stepwise(gamesc_num, direction='forward', criterion='aic')
     print(stepwise_model.summary())

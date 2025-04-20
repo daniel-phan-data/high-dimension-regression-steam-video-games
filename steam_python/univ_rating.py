@@ -4,27 +4,27 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from setup import load_and_clean_games
 
-# Set working directory
+# set working directory
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 def plot_rating_distribution(gamesc):
-    # Fréquences
+    # frequency
     rating_counts = gamesc["rating"].value_counts()
     print("Fréquences absolues :")
     print(rating_counts)
 
-    # Pourcentages
+    # precentages
     rating_percent = rating_counts / rating_counts.sum() * 100
     print("\nPourcentages (%):")
     print(rating_percent.round(2))
 
-    # DataFrame pour le plot
+    # df for plot
     rating_df = pd.DataFrame({
         "rating": rating_counts.index,
         "percentage": rating_percent.values
     })
 
-    # Graphique horizontal
+    # horizontal graph
     plt.figure(figsize=(8, 5))
     sns.barplot(data=rating_df, y="rating", x="percentage", color="steelblue", edgecolor="black")
     plt.title("Proportion of Game Ratings", fontsize=14, weight='bold')
@@ -38,7 +38,6 @@ def plot_rating_distribution(gamesc):
 if __name__ == "__main__":
     filepath = "../steam_data/games.csv"
     games = load_and_clean_games(filepath)
-    # print(games.head())
     cleaned_games = games[[
         "Average playtime forever", "Estimated owners",
         "Peak CCU", "Price", "Recommendations", "Required age",

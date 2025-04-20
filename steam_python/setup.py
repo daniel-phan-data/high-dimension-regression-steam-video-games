@@ -61,18 +61,18 @@ def create_rating(positive, negative):
 def load_and_clean_games(filepath):
     df = pd.read_csv(filepath)
 
-    # Filter games with playtime > 0 and Peak.CCU > 0
+    # flter games with playtime > 0 and Peak.CCU > 0
     df = df[(df["Average playtime forever"] > 0) & (df["Peak CCU"] > 0)]
 
-    # Fill NA with 0
+    # fill NA with 0
     df.fillna(0, inplace=True)
 
-    # Create new columns
+    # create new variables
     df["total_reviews"] = df.apply(lambda row: create_total_reviews(row["Positive"], row["Negative"]), axis=1)
     df["positive_ratio"] = df.apply(lambda row: create_positive_ratio(row["Positive"], row["Negative"]), axis=1)
     df["rating"] = df.apply(lambda row: create_rating(row["Positive"], row["Negative"]), axis=1)
 
-    # Optional: force ordered categories like in R
+    # set order for rating
     rating_levels = [
         "Overwhelmingly Positive", "Very Positive", "Positive", 
         "Mostly Positive", "Mixed", "Mostly Negative", "Negative", 
@@ -80,7 +80,7 @@ def load_and_clean_games(filepath):
     ]
     df["rating"] = pd.Categorical(df["rating"], categories=rating_levels, ordered=True)
 
-    # Keep only relevant columns
+    # select variables
     df = df[[
         "Name", "Publishers", "Average playtime forever", "Estimated owners",
         "Peak CCU", "rating", "Price", "Recommendations", "Required age",
@@ -90,12 +90,10 @@ def load_and_clean_games(filepath):
     return df
 
 def clean_column_names(df):
-    """
-    Renomme les colonnes en snake_case sans espaces ni majuscules.
-    Exemple : "Estimated Owners" → "estimated_owners"
+    """ cleans column names
     """
     new_columns = {
-        col: re.sub(r'\W+', '_', col.strip().lower())  # supprime les caractères non alphanumériques et met en snake_case
+        col: re.sub(r'\W+', '_', col.strip().lower())
         for col in df.columns
     }
     df = df.rename(columns=new_columns)

@@ -15,8 +15,6 @@ gamesc <- games %>%
          Positive, Negative,
          total_reviews, positive_ratio)
 
-
-
 # Function to create a linear model
 create_lm <- function(dataset, Y, X, categories) {
     if (length(categories) == 0) {

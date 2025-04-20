@@ -16,21 +16,20 @@ gamesc <- games %>%
          total_reviews, positive_ratio)
 
 ## normality tests for quantitative variables (bivar tests) ----
-#normality test
-# Sélectionner les colonnes a tester pour la normalite
+# select variables to test
 names(gamesc)
 numeric_cols <- gamesc %>%
   select(Average.playtime.forever, Peak.CCU, Price, Recommendations, Required.age,
          Positive, Negative, total_reviews, positive_ratio)
 
-# Appliquer log10 (+1 pour éviter log10(0))
+# log transformation
 numeric_cols_log <- numeric_cols %>%
   mutate(across(everything(), ~ log10(. + 1)))
 
-# Appliquer le test de Lilliefors et extraire les p-values
+# lillie tests
 lillie_results <- lapply(numeric_cols_log, lillie.test)
 
-# Créer un tableau avec les noms des variables et leurs p-values
+# store results in a dataframe
 lillie_table <- data.frame(
   "p-value lillie tests" = sapply(lillie_results, function(x) x$p.value)
 )
@@ -43,38 +42,37 @@ numeric_cols <- gamesc %>%
          Positive, Negative, total_reviews, positive_ratio)
 names(numeric_cols)
 
-# Effectuer le test de Spearman pour toutes les combinaisons avec "Average.playtime.forever"
+# spearman for every combination with average.playtime.forever
 spearman_results <- list()
-rho_values <- list()  # Liste pour stocker les valeurs de rho
+rho_values <- list()  # store rho values in a list
 
-for (var in names(numeric_cols)[-1]) {  # Exclure "Average.playtime.forever" de la liste
+for (var in names(numeric_cols)[-1]) {  # exclude average playtime 
   test_result <- suppressWarnings(cor.test(numeric_cols$Average.playtime.forever, numeric_cols[[var]], method = "spearman"))
   
-  # Stocker les p-values et rho dans les listes
-  spearman_results[[var]] <- test_result$p.value  # Stocker les p-values
-  rho_values[[var]] <- test_result$estimate  # Stocker les valeurs de rho
+  # store rho and p values in lists
+  spearman_results[[var]] <- test_result$p.value
+  rho_values[[var]] <- test_result$estimate
 }
 
-# Créer un tableau avec les résultats
+# store tests results in dataframe
 spearman_table <- data.frame(
   "p-value spearman" = unlist(spearman_results),
   "rho (Spearman)" = unlist(rho_values)
 )
 
-# Afficher les résultats
 print(spearman_table)
 
 
 ## kruskal wallis because no normality and data is not paired ----
 names(gamesc)
-# Définir la variable y a expliquer
+# target variable
 y <- gamesc$Average.playtime.forever
 
-# Sélectionner les variables qualitatives
+# categorical predictors
 quali <- gamesc %>%
   select(Estimated.owners, rating)
 
-# Créer une liste vide pour stocker les résultats
+# empty table to store results
 kruskal_table <- data.frame(
   Test = character(),
   H_statistic = numeric(),
@@ -82,22 +80,21 @@ kruskal_table <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# Appliquer le test Kruskal-Wallis sur chaque variable qualitative
+# kruskal test for all the variables of the list
 for (var in names(quali)) {
   test_result <- kruskal.test(y ~ gamesc[[var]], data = gamesc)
   
-  # Ajouter les résultats au tableau
+  # add results to table
   kruskal_table <- rbind(kruskal_table, data.frame(
-    Test = var,  # Remplacer par le nom de la variable quali
+    Test = var,  # display variable name instead of test name
     H_statistic = test_result$statistic,
     p_value = test_result$p.value
   ))
 }
 
-# Afficher le tableau complet avec la colonne Test
 print(kruskal_table)
 
-## Afficher tout les resultats des tests bivaries----
+## display all bivariate tests results ----
 print(lillie_table)
 print(spearman_table)
 print(kruskal_table)

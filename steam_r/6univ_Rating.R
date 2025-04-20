@@ -17,13 +17,10 @@ gamesc <- games %>%
 
 ## tables ----
 
-#Fréquences: pour voir combien de jeux appartiennent à chaque catégorie de rating
-
+# frequency
 table(gamesc$rating)
-#pourcentage des categories
-
+# percentages
 prop.table(table(gamesc$rating))*100
-
 
 ## graph ----
 

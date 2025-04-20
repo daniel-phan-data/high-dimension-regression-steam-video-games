@@ -9,7 +9,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 def plot_density(data, column, title, log=False):
     plt.figure(figsize=(8, 5))
     if log:
-        # Éviter les zéros ou valeurs négatives
+        # avoid log(0)
         data = data[data[column] > 0]
         x = np.log10(data[column])
         xlabel = f"log10({column})"
@@ -35,7 +35,6 @@ def print_log_tests(cleaned_games):
 if __name__ == "__main__":
     filepath = "../steam_data/games.csv"
     games = load_and_clean_games(filepath)
-    # print(games.head())
     cleaned_games = games[[
         "Average playtime forever", "Estimated owners",
         "Peak CCU", "Price", "Recommendations", "Required age",

@@ -20,9 +20,9 @@
 packages <- c(
   "tidyverse", "DataExplorer", "dplyr", "ggplot2",
   "leaps", "glmulti", "nlme", "nnet", "pscl", "car",
-  "rlang", "corrplot", "ggcorrplot", "lmtest"
+  "rlang", "corrplot", "ggcorrplot", "lmtest",
+  "nortest"
 )
-
 
 ## subfunctions ----
 setup <- function() {

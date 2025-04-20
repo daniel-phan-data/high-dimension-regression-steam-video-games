@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from setup import load_and_clean_games
 
+# set working directory
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 def print_boxplots(cleaned_games: pd.DataFrame) -> None:
@@ -50,7 +51,6 @@ def categorize_age(age: int) -> str:
 
 def print_required_age(cleaned_games: pd.DataFrame) -> None:
     cleaned_games['age_Category'] = cleaned_games['Required age'].apply(categorize_age)
-    # Barplot avec Seaborn
     sns.countplot(data=cleaned_games, x='age_Category', order=["Tout public", "+12", "+16", "+18"], color="steelblue")
     plt.title("Fréquence des catégories d'âge")
     plt.xlabel("Âge requis")
@@ -59,7 +59,7 @@ def print_required_age(cleaned_games: pd.DataFrame) -> None:
     plt.show()
 
 def print_owners(cleaned_games):
-    # Dictionnaire de renommage
+    # rename categories to more readable labels
     new_labels = {
         "0 - 20000": "0-20k",
         "20000 - 50000": "20k-50k",
@@ -75,11 +75,10 @@ def print_owners(cleaned_games):
         "50000000 - 100000000": "50M-100M",
         "100000000 - 200000000": "100M-200M"
     }
-
-    # Appliquer le renommage
+    
     cleaned_games["Estimated owners2"] = cleaned_games["Estimated owners"].map(new_labels)
 
-    # Définir l'ordre des catégories
+    # set categories order
     ordered_categories = list(new_labels.values())
     cleaned_games["Estimated owners2"] = pd.Categorical(
         cleaned_games["Estimated owners2"],
@@ -87,10 +86,8 @@ def print_owners(cleaned_games):
         ordered=True
     )
 
-    # Afficher les niveaux
     print("Catégories ordonnées :", cleaned_games["Estimated owners2"].cat.categories)
 
-    # Tracer le graphique
     plt.figure(figsize=(10, 6))
     sns.countplot(data=cleaned_games, x="Estimated owners2", color="steelblue")
     plt.title("Distribution of Estimated Owners")
