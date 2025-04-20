@@ -1,6 +1,6 @@
 #spearman (corrélation non paramétrique)
 proc corr data=games spearman;
-    _numeric_;
+    var _numeric_;
 run;
 
 #Test de Kruskal-Wallis (quantitative vs catégorielle)
@@ -11,6 +11,6 @@ run;
 
 #Test de normalité
 proc univariate data=games normal;
-    _numeric_;
+    var _numeric_;
 run;
 
