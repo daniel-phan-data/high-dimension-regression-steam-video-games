@@ -3,7 +3,7 @@ data univariate;
 set GAMES;
 keep Average_playtime_forever Peak_CCU 
          rating Price Recommandations Required_age 
-         Positive Negative total_reviews Positive_Ratio estimated_owners;
+         Positive Negative total_reviews Positive_Ratio estimated;
 run;
 
 proc univariate 
