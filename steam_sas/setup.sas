@@ -55,7 +55,7 @@ run;
 
 data games ;
 set games; 
-    length estimated_owners $20;
+    length estimated_owners $10;
 
     if Estimated_owners = "0 - 20000" then estimated_owners = "0-20k";
     else if Estimated_owners = "20000 - 50000" then estimated_owners = "20k-50k";
