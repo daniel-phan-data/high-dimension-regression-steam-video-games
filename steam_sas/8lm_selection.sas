@@ -8,6 +8,7 @@ proc glmselect data=gamesc;
    model average_playtime_forever = peak_ccu price recommendations required_age positive negative
          / selection=score(select=aic) details=all;
 run;
+
 #stepwise 
 proc glmselect data=gamesc;
    model average_playtime_forever = peak_ccu price recommendations required_age positive negative
