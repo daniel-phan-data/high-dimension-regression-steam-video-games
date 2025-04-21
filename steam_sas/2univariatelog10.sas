@@ -1,6 +1,5 @@
 ods graphics on;
 
-/* Step 1: Create log-transformed variables */
 data univariatelog10;
 	set GAMES;
 	log_Average_playtime_forever=log10(Average_playtime_forever + 1);
@@ -11,10 +10,8 @@ data univariatelog10;
 	log_Price=log10(Price + 1);
 run;
 
-/* Step 2: Define variables to plot */
 %let varlist = log_Peak_CCU log_Positive log_Negative log_Recommendations log_Price;
 
-/* Step 3: Define macro to plot each variable using SGPLOT */
 %macro plot_vars;
 	%let i = 1;
 	%let var = %scan(&varlist, &i, %str( ));
@@ -32,6 +29,5 @@ run;
 	%end;
 %mend;
 
-/* Step 4: Run the macro */
 %plot_vars;
 ods graphics off;
