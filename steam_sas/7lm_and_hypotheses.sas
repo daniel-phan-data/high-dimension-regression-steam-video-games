@@ -1,6 +1,6 @@
 /*Résidus vs valeurs ajustées, normalité, homoscédasticité, influence */
 proc reg data=games;
-    model Y = average_playtime_forever estimated_owners peak_ccu price recommendations required_age positive negative / 
+    model average_playtime_forever =  peak_ccu price recommendations required_age positive negative / 
         vif 
         r 
         influence 
@@ -31,9 +31,19 @@ proc sgplot data=reg_out;
     scatter x=lev y=student_res;
 run;
 
-proc sgplot data=reg_out;
-    scatter x=_N_ y=cook_dist;
-    refline %sysevalf(4 / %sysfunc(countw(%str(ton_dataset)))) / axis=y lineattrs=(color=red);
+data reg_out_num;
+    set reg_out;
+    obs_id = _N_;
+run;
+
+proc sql noprint;
+    select count(*) into :n_obs from reg_out;
+quit;
+
+proc sgplot data=reg_out_num;
+    scatter x=obs_id y=cook_dist;
+    refline %sysevalf(4 / &n_obs) / axis=y lineattrs=(color=red thickness=2 pattern=shortdash);
+    title "Cook's Distance per Observation";
 run;
 
 
