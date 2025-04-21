@@ -21,7 +21,6 @@ steam_python/run_all.py
 *.Rmd
 *.html
 *.nb.html
-*.pdf
 *.docx
 *.pptx
 *.cache/
