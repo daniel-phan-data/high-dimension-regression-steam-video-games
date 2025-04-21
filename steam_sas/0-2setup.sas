@@ -8,7 +8,7 @@ set STEAM_GAMES(rename=(
     keep Average_playtime_forever Peak_CCU 
           Price Recommendations Required_age 
          Positive Negative total_reviews Positive_Ratio rating_levels ;
-
+ length estimated_owners $10;
 
 Total_Reviews = Positive + Negative;
 Positive_Ratio = Positive  / Total_Reviews;
@@ -17,10 +17,8 @@ Supported_Languages = countw('Supported Languages'n);
 Release_Year = year(Release_Date); 
 
 if Average_Playtime_Forever > 0 ;
-run;
 
-data GAMES;
-set games ;
+
 if total_reviews > 0 then
         positive_ratio = (Positive / total_reviews) * 100;
     else 
@@ -51,13 +49,11 @@ if total_reviews > 0 then
         else if 0 <= positive_ratio < 20 then rating_levels = "Negative";
     end;
     else rating_levels = "Not enough reviews";
-run;
 
-data games ;
-set games; 
-    length estimated_owners $10;
 
-    if Estimated_owners = "0 - 20000" then estimated_owners = "0-20k";
+
+    
+  if Estimated_owners = "0 - 20000" then estimated_owners = "0-20k";
     else if Estimated_owners = "20000 - 50000" then estimated_owners = "20k-50k";
     else if Estimated_owners = "50000 - 100000" then estimated_owners = "50k-100k";
     else if Estimated_owners = "100000 - 200000" then estimated_owners = "100k-200k";
