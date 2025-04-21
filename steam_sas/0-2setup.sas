@@ -7,7 +7,7 @@ set STEAM_GAMES(rename=(
     ));
     keep Average_playtime_forever Peak_CCU 
           Price Recommendations Required_age 
-         Positive Negative total_reviews Positive_Ratio rating_levels ;
+         Positive Negative total_reviews Positive_Ratio rating_levels Estimated_owners ;
  length estimated_owners $10;
 
 Total_Reviews = Positive + Negative;
