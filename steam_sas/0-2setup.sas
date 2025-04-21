@@ -1,3 +1,5 @@
+/*  run this script once per session*/
+
 DATA GAMES;
 set STEAM_GAMES(rename=(
         'Average playtime forever'n = Average_playtime_forever
