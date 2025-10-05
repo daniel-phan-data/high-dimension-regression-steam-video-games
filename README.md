@@ -1,4 +1,4 @@
-# MODEL_LIN_STEAM
+# Linear Models on Steam's video games
 
 ## Description
 This project is a statistical analysis of steam's video games data, scrapped from their API, through the use of linear models, and other regression techniques. You will find here all the code we used, in R.
